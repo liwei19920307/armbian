@@ -1,0 +1,8 @@
+# RK3399 SW799 Board
+BOARD_NAME="SW799"
+BOARDFAMILY="rockchip64"
+BOOTCONFIG="sw799-rk3399_defconfig"
+KERNEL_TARGET="current"
+FULL_DESKTOP="yes"
+BOOT_LOGO="desktop"
+BOOT_FDT_FILE="rockchip/rk3399-sw799.dtb"
