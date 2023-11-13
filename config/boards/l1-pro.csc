@@ -1,4 +1,4 @@
-# RK3328 L1 Pro Board
+# L1 Pro
 BOARD_NAME="L1 Pro"
 BOARDFAMILY="rockchip64"
 BOOTCONFIG="l1-pro-rk3328_defconfig"

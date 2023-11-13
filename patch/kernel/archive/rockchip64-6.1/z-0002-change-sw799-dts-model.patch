@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Igor Pecovnik <igor.pecovnik@****l.com>
+Date: Mon, 13 Nov 2023 17:53:56 +0800
+Subject: Patching kernel rockchip64 files
+ arch/arm64/boot/dts/rockchip/rk3399-sw799.dts
+
+Signed-off-by: Igor Pecovnik <igor.pecovnik@****l.com>
+---
+ arch/arm64/boot/dts/rockchip/rk3399-sw799.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-sw799.dts b/arch/arm64/boot/dts/rockchip/rk3399-sw799.dts
+index 54e7f9757..44b4d345d 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-sw799.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-sw799.dts
+@@ -3,11 +3,11 @@
+ #include <dt-bindings/input/input.h>
+ #include "rk3399.dtsi"
+ #include "rk3399-opp.dtsi"
+ 
+ / {
+-	model = "RK3399 SW799 Board";
++	model = "RK3399 SW799";
+ 	compatible = "rockchip,rk3399-sw799", "rockchip,rk3399";
+ 
+ 	aliases {
+ 		mmc0 = &sdhci;
+ 	};
+-- 
+Created with Armbian build tools https://github.com/armbian/build
+

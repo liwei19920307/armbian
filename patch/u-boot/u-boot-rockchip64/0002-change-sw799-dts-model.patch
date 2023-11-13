@@ -1,0 +1,30 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Igor Pecovnik <igor.pecovnik@****l.com>
+Date: Mon, 13 Nov 2023 17:57:58 +0800
+Subject: Patching u-boot rockchip64 files arch/arm/dts/rk3399-sw799.dts
+
+Signed-off-by: Igor Pecovnik <igor.pecovnik@****l.com>
+---
+ arch/arm/dts/rk3399-sw799.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/dts/rk3399-sw799.dts b/arch/arm/dts/rk3399-sw799.dts
+index 88cd70f71f..9e3b83c0e9 100644
+--- a/arch/arm/dts/rk3399-sw799.dts
++++ b/arch/arm/dts/rk3399-sw799.dts
+@@ -1,11 +1,11 @@
+ /dts-v1/;
+ #include "rk3399.dtsi"
+ #include "rk3399-opp.dtsi"
+ 
+ / {
+-	model = "RK3399 SW799 Board";
++	model = "RK3399 SW799";
+ 	compatible = "rockchip,rk3399-sw799", "rockchip,rk3399";
+ 
+ 	aliases {
+ 		mmc0 = &sdhci;
+ 	};
+-- 
+Created with Armbian build tools https://github.com/armbian/build
+

@@ -1,4 +1,4 @@
-# RK3566 Home Assistant Green Board
+# HA Green
 BOARD_NAME="HA Green"
 BOARDFAMILY="rk35xx"
 BOOTCONFIG="ha-green-rk3566_defconfig"
