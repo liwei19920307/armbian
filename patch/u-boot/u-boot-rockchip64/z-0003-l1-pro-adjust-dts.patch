@@ -1,0 +1,173 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: John Doe <john.doe@somewhere.on.planet>
+Date: Sat, 23 Dec 2023 17:29:17 +0800
+Subject: Patching u-boot rockchip64 files arch/arm/dts/rk3328-l1-pro.dts
+
+Signed-off-by: John Doe <john.doe@somewhere.on.planet>
+---
+ arch/arm/dts/rk3328-l1-pro.dts | 112 +---------
+ 1 file changed, 8 insertions(+), 104 deletions(-)
+
+diff --git a/arch/arm/dts/rk3328-l1-pro.dts b/arch/arm/dts/rk3328-l1-pro.dts
+index e663d8a731..f040229847 100644
+--- a/arch/arm/dts/rk3328-l1-pro.dts
++++ b/arch/arm/dts/rk3328-l1-pro.dts
+@@ -7,104 +7,29 @@
+ 
+ 	aliases {
+ 		mmc0 = &emmc;
+ 	};
+ 
+-	chosen {
+-		stdout-path = "serial2:1500000n8";
+-	};
+-
+-	gmac_clkin: external-gmac-clock {
+-		compatible = "fixed-clock";
+-		clock-frequency = <125000000>;
+-		clock-output-names = "gmac_clkin";
+-		#clock-cells = <0>;
+-	};
+-
+ 	dc_12v: dc-12v {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "dc_12v";
+ 		regulator-always-on;
+ 		regulator-boot-on;
+ 		regulator-min-microvolt = <12000000>;
+ 		regulator-max-microvolt = <12000000>;
+ 	};
+ 
+-	vcc_sata: vcc-sata {
+-		compatible = "regulator-fixed";
+-		regulator-name = "vcc_sata";
+-		regulator-always-on;
+-		regulator-boot-on;
+-		vin-supply = <&dc_12v>;
+-		enable-active-high;
+-		gpio = <&gpio2 RK_PC2 GPIO_ACTIVE_HIGH>;
+-	};
+-
+ 	vcc_sys: vcc-sys {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vcc_sys";
+ 		regulator-always-on;
+ 		regulator-boot-on;
+ 		regulator-min-microvolt = <5000000>;
+ 		regulator-max-microvolt = <5000000>;
+ 	};
+ };
+ 
+-&cpu0 {
+-	cpu-supply = <&vdd_arm>;
+-};
+-
+-&cpu1 {
+-	cpu-supply = <&vdd_arm>;
+-};
+-
+-&cpu2 {
+-	cpu-supply = <&vdd_arm>;
+-};
+-
+-&cpu3 {
+-	cpu-supply = <&vdd_arm>;
+-};
+-
+-&hdmi {
+-	status = "okay";
+-};
+-
+-&hdmiphy {
+-	status = "okay";
+-};
+-
+-&hdmi_sound {
+-	status = "okay";
+-};
+-
+-&emmc {
+-	bus-width = <8>;
+-	cap-mmc-highspeed;
+-	non-removable;
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&emmc_clk &emmc_cmd &emmc_bus8>;
+-	status = "okay";
+-};
+-
+-&gmac2io {
+-	assigned-clocks = <&cru SCLK_MAC2IO>, <&cru SCLK_MAC2IO_EXT>;
+-	assigned-clock-parents = <&gmac_clkin>, <&gmac_clkin>;
+-	clock_in_out = "input";
+-	phy-supply = <&vcc_io>;
+-	phy-mode = "rgmii";
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&rgmiim1_pins>;
+-	snps,force_thresh_dma_mode;
+-	snps,reset-gpio = <&gpio1 RK_PC2 GPIO_ACTIVE_LOW>;
+-	snps,reset-active-low;
+-	snps,reset-delays-us = <0 10000 50000>;
+-	tx_delay = <0x28>;
+-	rx_delay = <0x16>;
+-	status = "okay";
+-};
+-
+ &i2c1 {
+ 	status = "okay";
+ 
+ 	rk805: pmic@18 {
+ 		compatible = "rockchip,rk805";
+@@ -209,42 +134,21 @@
+ 			};
+ 		};
+ 	};
+ };
+ 
+-&i2s0 {
+-	status = "okay";
+-};
+-
+-&i2s1 {
+-	status = "okay";
+-};
+-
+-&pwm2 {
+-	status = "okay";
+-};
+-
+-&tsadc {
+-	status = "okay";
+-};
+-
+-&u2phy {
+-	status = "okay";
+-};
+-
+-&usb20_otg {
+-	dr_mode = "host";
+-	status = "okay";
+-};
+-
+-&usbdrd3 {
+-	dr_mode = "host";
++&emmc {
++	bus-width = <8>;
++	cap-mmc-highspeed;
++	non-removable;
++	pinctrl-names = "default";
++	pinctrl-0 = <&emmc_clk &emmc_cmd &emmc_bus8>;
+ 	status = "okay";
+ };
+ 
+-&vop {
++&saradc {
+ 	status = "okay";
+ };
+ 
+-&vop_mmu {
++&uart2 {
+ 	status = "okay";
+ };
+-- 
+Created with Armbian build tools https://github.com/armbian/build
+
