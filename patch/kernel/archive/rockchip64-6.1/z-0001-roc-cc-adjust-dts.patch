@@ -1,0 +1,395 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: John Doe <john.doe@somewhere.on.planet>
+Date: Sat, 23 Dec 2023 15:48:59 +0800
+Subject: Patching kernel rockchip64 files
+ arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts
+
+Signed-off-by: John Doe <john.doe@somewhere.on.planet>
+---
+ arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts | 238 ++++------
+ 1 file changed, 85 insertions(+), 153 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts b/arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts
+old mode 100755
+new mode 100644
+index c5ecfc3e5..1712b5b71
+--- a/arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts
+@@ -1,196 +1,105 @@
+-// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+-/*
+- * Copyright (c) 2017 T-Chip Intelligent Technology Co., Ltd
+- */
+-
+ /dts-v1/;
+-#include "rk3328-dram-renegade-timing.dtsi"
+ #include "rk3328.dtsi"
+ 
+ / {
+-	model = "Firefly roc-rk3328-cc";
+-	compatible = "firefly,roc-rk3328-cc", "rockchip,rk3328";
++	model = "RK3328 ROC CC";
++	compatible = "rockchip,rk3328-roc-cc", "rockchip,rk3328";
+ 
+ 	aliases {
+ 		mmc0 = &sdmmc;
+ 		mmc1 = &emmc;
+ 	};
+ 
+-	chosen {
+-		stdout-path = "serial2:1500000n8";
+-	};
+-
+-	/delete-node/ dmc-opp-table;
+-	dmc_opp_table: dmc-opp-table {
+-		compatible = "operating-points-v2";
+-
+-		opp-786000000 {
+-			opp-hz = /bits/ 64 <786000000>;
+-			opp-microvolt = <1075000 1075000 12000000>;
+-		};
+-		opp-798000000 {
+-			opp-hz = /bits/ 64 <798000000>;
+-			opp-microvolt = <1075000 1075000 12000000>;
+-		};
+-		opp-840000000 {
+-			opp-hz = /bits/ 64 <840000000>;
+-			opp-microvolt = <1075000 1075000 12000000>;
+-		};
+-		opp-924000000 {
+-			opp-hz = /bits/ 64 <924000000>;
+-			opp-microvolt = <1100000 1100000 12000000>;
+-		};
+-		opp-1068000000 {
+-			opp-hz = /bits/ 64 <1068000000>;
+-			opp-microvolt = <1175000 1175000 12000000>;
+-		};
+-	};
+-
+ 	gmac_clkin: external-gmac-clock {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <125000000>;
+ 		clock-output-names = "gmac_clkin";
+ 		#clock-cells = <0>;
+ 	};
+ 
+ 	dc_12v: dc-12v {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "dc_12v";
+-		regulator-always-on;
+-		regulator-boot-on;
+ 		regulator-min-microvolt = <12000000>;
+ 		regulator-max-microvolt = <12000000>;
++		regulator-always-on;
++		regulator-boot-on;
+ 	};
+ 
+-	vcc_sd: sdmmc-regulator {
++	vcc_sys: vcc-sys {
+ 		compatible = "regulator-fixed";
+-		gpio = <&gpio0 RK_PD6 GPIO_ACTIVE_LOW>;
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&sdmmc0m1_pin>;
++		regulator-name = "vcc_sys";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-always-on;
+ 		regulator-boot-on;
++		vin-supply = <&dc_12v>;
++	};
++
++	vcc_host1_5v: vcc-host1-5v {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc_host1_5v";
++		gpio = <&gpio1 RK_PD2 GPIO_ACTIVE_HIGH>;
++		regulator-always-on;
++		enable-active-high;
++		vin-supply = <&vcc_sys>;
++	};
++
++	vcc_sd: vcc-sd {
++		compatible = "regulator-fixed";
+ 		regulator-name = "vcc_sd";
++		gpio = <&gpio0 RK_PD6 GPIO_ACTIVE_LOW>;
+ 		regulator-min-microvolt = <3300000>;
+ 		regulator-max-microvolt = <3300000>;
++		pinctrl-0 = <&sdmmc0m1_pin>;
++		pinctrl-names = "default";
++		regulator-boot-on;
+ 		vin-supply = <&vcc_io>;
+ 	};
+ 
+-	vcc_sdio: sdmmcio-regulator {
++	vcc_sdio: vcc-sdio {
+ 		compatible = "regulator-gpio";
+-		gpios = <&grf_gpio 0 GPIO_ACTIVE_HIGH>;
+-		states = <1800000 0x1>,
+-			 <3300000 0x0>;
+ 		regulator-name = "vcc_sdio";
+ 		regulator-type = "voltage";
++		gpios = <&grf_gpio 0 GPIO_ACTIVE_HIGH>;
++		states = <1800000 0x1>, <3300000 0x0>;
+ 		regulator-min-microvolt = <1800000>;
+ 		regulator-max-microvolt = <3300000>;
+ 		regulator-always-on;
+ 		vin-supply = <&vcc_sys>;
+ 	};
+ 
+-	vcc_host1_5v: vcc_otg_5v: vcc-host1-5v-regulator {
+-		compatible = "regulator-fixed";
+-		enable-active-high;
+-		gpio = <&gpio1 RK_PD2 GPIO_ACTIVE_HIGH>;
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&usb20_host_drv>;
+-		regulator-name = "vcc_host1_5v";
+-		regulator-always-on;
+-		vin-supply = <&vcc_sys>;
+-	};
+-
+-	vcc_sys: vcc-sys {
+-		compatible = "regulator-fixed";
+-		regulator-name = "vcc_sys";
+-		regulator-always-on;
+-		regulator-boot-on;
+-		regulator-min-microvolt = <5000000>;
+-		regulator-max-microvolt = <5000000>;
+-		vin-supply = <&dc_12v>;
+-	};
+-
+-	vcc_phy: vcc-phy-regulator {
++	vcc_phy: vcc-phy {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vcc_phy";
+ 		regulator-always-on;
+ 		regulator-boot-on;
+ 	};
+ 
+ 	leds {
+ 		compatible = "gpio-leds";
+ 
+-		power_led: led-0 {
+-			label = "firefly:blue:power";
++		led-blue {
++			label = "heartbeat";
+ 			linux,default-trigger = "heartbeat";
+ 			gpios = <&rk805 1 GPIO_ACTIVE_LOW>;
+ 			default-state = "on";
+ 		};
+ 
+-		user_led: led-1 {
+-			label = "firefly:yellow:user";
+-			linux,default-trigger = "mmc1";
++		led-yellow {
++			label = "sd";
++			linux,default-trigger = "mmc0";
+ 			gpios = <&rk805 0 GPIO_ACTIVE_LOW>;
+ 			default-state = "off";
+ 		};
+ 	};
+ 
+ 	ir-receiver {
+ 		compatible = "gpio-ir-receiver";
+ 		gpios = <&gpio2 RK_PA2 GPIO_ACTIVE_LOW>;
+-		pinctrl-0 = <&ir_int>;
+-		pinctrl-names = "default";
+ 	};
+-
+-};
+-
+-&analog_sound {
+-	status = "okay";
+-};
+-
+-&codec {
+-	status = "okay";
+-};
+-
+-&dfi {
+-	status = "okay";
+-};
+-
+-&dmc {
+-	center-supply = <&vdd_logic>;
+-	ddr_timing = <&ddr_timing>;
+-	status = "okay";
+-};
+-
+-
+-&cpu0 {
+-	cpu-supply = <&vdd_arm>;
+-};
+-
+-&cpu1 {
+-	cpu-supply = <&vdd_arm>;
+-};
+-
+-&cpu2 {
+-	cpu-supply = <&vdd_arm>;
+-};
+-
+-&cpu3 {
+-	cpu-supply = <&vdd_arm>;
+-};
+-
+-&emmc {
+-	bus-width = <8>;
+-	cap-mmc-highspeed;
+-	max-frequency = <150000000>;
+-	mmc-ddr-1_8v;
+-	mmc-hs200-1_8v;
+-	non-removable;
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&emmc_clk &emmc_cmd &emmc_bus8>;
+-	vmmc-supply = <&vcc_io>;
+-	vqmmc-supply = <&vcc18_emmc>;
+-	status = "okay";
+ };
+ 
+ &gmac2io {
+ 	assigned-clocks = <&cru SCLK_MAC2IO>, <&cru SCLK_MAC2IO_EXT>;
+ 	assigned-clock-parents = <&gmac_clkin>, <&gmac_clkin>;
+@@ -208,10 +117,26 @@ &gmac2io {
+ 	tx_delay = <0x24>;
+ 	rx_delay = <0x18>;
+ 	status = "okay";
+ };
+ 
++&cpu0 {
++	cpu-supply = <&vdd_arm>;
++};
++
++&cpu1 {
++	cpu-supply = <&vdd_arm>;
++};
++
++&cpu2 {
++	cpu-supply = <&vdd_arm>;
++};
++
++&cpu3 {
++	cpu-supply = <&vdd_arm>;
++};
++
+ &gpu {
+ 	mali-supply = <&vdd_logic>;
+ };
+ 
+ &hdmi {
+@@ -236,12 +161,10 @@ rk805: pmic@18 {
+ 		interrupts = <24 IRQ_TYPE_LEVEL_LOW>;
+ 		#clock-cells = <1>;
+ 		clock-output-names = "xin32k", "rk805-clkout2";
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&pmic_int_l>;
+ 		rockchip,system-power-controller;
+ 		wakeup-source;
+ 
+ 		vcc1-supply = <&vcc_sys>;
+ 		vcc2-supply = <&vcc_sys>;
+@@ -342,40 +265,18 @@ &i2s0 {
+ &i2s1 {
+ 	status = "okay";
+ };
+ 
+ &io_domains {
+-	status = "okay";
+-
+ 	vccio1-supply = <&vcc_io>;
+ 	vccio2-supply = <&vcc18_emmc>;
+ 	vccio3-supply = <&vcc_sdio>;
+ 	vccio4-supply = <&vcc_18>;
+ 	vccio5-supply = <&vcc_io>;
+ 	vccio6-supply = <&vcc_io>;
+ 	pmuio-supply = <&vcc_io>;
+-};
+-
+-&pinctrl {
+-
+-	ir {
+-		ir_int: ir-int {
+-			rockchip,pins = <2 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>;
+-		};
+-	};
+-
+-	pmic {
+-		pmic_int_l: pmic-int-l {
+-			rockchip,pins = <1 RK_PD0 RK_FUNC_GPIO &pcfg_pull_up>;
+-		};
+-	};
+-
+-	usb2 {
+-		usb20_host_drv: usb20-host-drv {
+-			rockchip,pins = <1 RK_PD2 RK_FUNC_GPIO &pcfg_pull_none>;
+-		};
+-	};
++	status = "okay";
+ };
+ 
+ &sdmmc {
+ 	bus-width = <4>;
+ 	cap-mmc-highspeed;
+@@ -391,27 +292,58 @@ &sdmmc {
+ 	vmmc-supply = <&vcc_sd>;
+ 	vqmmc-supply = <&vcc_sdio>;
+ 	status = "okay";
+ };
+ 
++&emmc {
++	bus-width = <8>;
++	cap-mmc-highspeed;
++	max-frequency = <150000000>;
++	mmc-ddr-1_8v;
++	mmc-hs200-1_8v;
++	non-removable;
++	pinctrl-names = "default";
++	pinctrl-0 = <&emmc_clk &emmc_cmd &emmc_bus8>;
++	vmmc-supply = <&vcc_io>;
++	vqmmc-supply = <&vcc18_emmc>;
++	status = "okay";
++};
++
++&codec {
++	status = "okay";
++};
++
++&analog_sound {
++	status = "okay";
++};
++
++&dfi {
++	status = "okay";
++};
++
+ &spdif {
+ 	pinctrl-0 = <&spdifm0_tx>;
+ 	status = "okay";
+ };
+ 
+ &spdif_out {
+ 	status = "okay";
+ };
+ 
+ &spdif_sound {
+- 	status = "okay";
++	status = "okay";
+ };
+ 
+ &tsadc {
+ 	status = "okay";
+ };
+ 
++&saradc {
++	vref-supply = <&vcc_18>;
++	status = "okay";
++};
++
+ &u2phy {
+ 	status = "okay";
+ };
+ 
+ &u2phy_host {
+-- 
+Created with Armbian build tools https://github.com/armbian/build
+
