@@ -100,6 +100,7 @@ driver_rtl8189ES() {
 
 		# fix compilation for kernels >= 5.4.251
 		process_patch_file "${SRC}/patch/misc/wireless-rtl8189es-Fix-building-on-5.4.251-kernel.patch" "applying"
+		process_patch_file "${SRC}/patch/misc/wireless-rtl8189es-fix-compilation-with-6.7-kernel.patch"  "applying"
 	fi
 }
 
@@ -147,6 +148,7 @@ driver_rtl8189FS() {
 
 		# fix compilation for kernels >= 5.4.251
 		process_patch_file "${SRC}/patch/misc/wireless-rtl8189fs-Fix-building-on-5.4.251-kernel.patch" "applying"
+		process_patch_file "${SRC}/patch/misc/wireless-rtl8189fs-fix-compilation-with-6.7-kernel.patch"  "applying"
 	fi
 
 }
@@ -190,6 +192,7 @@ driver_rtl8192EU() {
 
 		# fix compilation for kernels >= 5.4.251
 		process_patch_file "${SRC}/patch/misc/wireless-rtl8192eu-Fix-building-on-5.4.251-kernel.patch" "applying"
+		process_patch_file "${SRC}/patch/misc/wireless-rtl8192eu-fix-compilation-with-6.7-kernel.patch"  "applying"
 	fi
 }
 
@@ -238,7 +241,7 @@ driver_rtl8811_rtl8812_rtl8814_rtl8821() {
 
 		# fix compilation for kernels >= 6.3
 		process_patch_file "${SRC}/patch/misc/wireless-rtl8812au-6.3.patch" "applying"
-
+		process_patch_file "${SRC}/patch/misc/wireless-rtl8812au-fix-compilation-with-6.7-kernel.patch"  "applying"
 	fi
 
 }
@@ -249,7 +252,7 @@ driver_xradio_xr819() {
 	if linux-version compare "${version}" ge 4.19 && [[ "$LINUXFAMILY" == sunxi* ]]; then
 
 		display_alert "Adding" "Wireless drivers for Xradio XR819 chipsets" "info"
-		local xradio_xr819_ver="commit:547521df27d1a80fb5542e93fa13bd09fb2259a2"
+		local xradio_xr819_ver="commit:3a1f77fb2db248b7d18d93b67b16e0d6c91db184"
 
 		fetch_from_repo "$GITHUB_SOURCE/fifteenhex/xradio" "xradio" "${xradio_xr819_ver}" "yes"
 		cd "$kerneldir" || exit
@@ -272,7 +275,6 @@ driver_xradio_xr819() {
 			>> "$kerneldir/drivers/net/wireless/Makefile"
 		sed -i '/source "drivers\/net\/wireless\/ti\/Kconfig"/a source "drivers\/net\/wireless\/xradio\/Kconfig"' \
 			"$kerneldir/drivers/net/wireless/Kconfig"
-
 	fi
 
 }
@@ -625,7 +627,7 @@ driver_rtl8822BS() {
 
 driver_uwe5622() {
 	# Unisoc uwe5622 wireless Support
-	if linux-version compare "${version}" ge 5.15 && linux-version compare "${version}" le 6.6 && [[ "$LINUXFAMILY" == sunxi* || "$LINUXFAMILY" == rockchip64 ]]; then
+	if linux-version compare "${version}" ge 5.15 && [[ "$LINUXFAMILY" == sunxi* || "$LINUXFAMILY" == rockchip64 ]]; then
 		display_alert "Adding" "Drivers for Unisoc uwe5622 found on some Allwinner and Rockchip boards" "info"
 
 		if linux-version compare "${version}" ge 6.3; then
@@ -676,6 +678,8 @@ driver_uwe5622() {
 				process_patch_file "${SRC}/patch/misc/wireless-uwe5622/uwe5622-adjust-for-rockchip-post-6.1.patch"
 			fi
 		fi
+
+		process_patch_file "${SRC}/patch/misc/wireless-uwe5622/wireless-uwe5622-Fix-compilation-with-6.7-kernel.patch"  "applying"
 	fi
 }
 
