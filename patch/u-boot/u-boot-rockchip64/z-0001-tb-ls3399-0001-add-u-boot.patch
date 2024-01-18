@@ -1,43 +1,60 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: John Doe <john.doe@somewhere.on.planet>
-Date: Fri, 12 Jan 2024 18:38:32 +0800
-Subject: Patching kernel rockchip64 files
- arch/arm64/boot/dts/rockchip/Makefile
- arch/arm64/boot/dts/rockchip/rk3399-tb-ls3399.dts
+Date: Wed, 17 Jan 2024 20:58:33 +0800
+Subject: Patching u-boot rockchip64 files arch/arm/dts/Makefile
+ arch/arm/dts/rk3399-tb-ls3399-u-boot.dtsi arch/arm/dts/rk3399-tb-ls3399.dts
+ configs/tb-ls3399-rk3399_defconfig
 
 Signed-off-by: John Doe <john.doe@somewhere.on.planet>
 ---
- arch/arm64/boot/dts/rockchip/Makefile             |   1 +
- arch/arm64/boot/dts/rockchip/rk3399-tb-ls3399.dts | 660 ++++++++++
- 2 files changed, 661 insertions(+)
+ arch/arm/dts/Makefile                     |   3 +-
+ arch/arm/dts/rk3399-tb-ls3399-u-boot.dtsi |   8 +
+ arch/arm/dts/rk3399-tb-ls3399.dts         | 381 ++++++++++
+ configs/tb-ls3399-rk3399_defconfig        |  77 ++
+ 4 files changed, 468 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-index 2148d7c33..ec92e1273 100644
---- a/arch/arm64/boot/dts/rockchip/Makefile
-+++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -81,10 +81,11 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rockpro64-v2.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rockpro64.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire-excavator.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399pro-rock-pi-n10.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sw799.dtb
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-tb-ls3399.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-anbernic-rg353p.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-anbernic-rg503.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-panther-x2.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-pinenote-v1.1.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-pinenote-v1.2.dtb
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-tb-ls3399.dts b/arch/arm64/boot/dts/rockchip/rk3399-tb-ls3399.dts
+diff --git a/arch/arm/dts/Makefile b/arch/arm/dts/Makefile
+index 4cb68c243c..25ce01784f 100644
+--- a/arch/arm/dts/Makefile
++++ b/arch/arm/dts/Makefile
+@@ -168,11 +168,12 @@ dtb-$(CONFIG_ROCKCHIP_RK3399) += \
+ 	rk3399-rock-pi-4b.dtb \
+ 	rk3399-rock-pi-4c.dtb \
+ 	rk3399-rock960.dtb \
+ 	rk3399-rockpro64.dtb \
+ 	rk3399pro-rock-pi-n10.dtb \
+-	rk3399-sw799.dtb
++	rk3399-sw799.dtb \
++	rk3399-tb-ls3399.dtb
+ 
+ dtb-$(CONFIG_ROCKCHIP_RK3568) += \
+ 	rk3568-evb.dtb
+ 
+ dtb-$(CONFIG_ROCKCHIP_RV1108) += \
+diff --git a/arch/arm/dts/rk3399-tb-ls3399-u-boot.dtsi b/arch/arm/dts/rk3399-tb-ls3399-u-boot.dtsi
 new file mode 100644
-index 000000000..2fd50ed10
+index 0000000000..79799b1928
 --- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-tb-ls3399.dts
-@@ -0,0 +1,660 @@
++++ b/arch/arm/dts/rk3399-tb-ls3399-u-boot.dtsi
+@@ -0,0 +1,8 @@
++#include "rk3399-u-boot.dtsi"
++#include "rk3399-sdram-lpddr4-100.dtsi"
++
++/ {
++	chosen {
++		u-boot,spl-boot-order = "same-as-spl", &sdmmc, &sdhci;
++	};
++};
+diff --git a/arch/arm/dts/rk3399-tb-ls3399.dts b/arch/arm/dts/rk3399-tb-ls3399.dts
+new file mode 100644
+index 0000000000..f241d1a351
+--- /dev/null
++++ b/arch/arm/dts/rk3399-tb-ls3399.dts
+@@ -0,0 +1,381 @@
 +/dts-v1/;
 +#include <dt-bindings/input/input.h>
 +#include <dt-bindings/pwm/pwm.h>
 +#include "rk3399.dtsi"
-+#include "rk3399-opp.dtsi"
 +
 +/ {
 +	model = "RK3399 TB-LS3399";
@@ -47,17 +64,6 @@ index 000000000..2fd50ed10
 +		mmc0 = &sdmmc;
 +		mmc1 = &sdhci;
 +	};
-+
-+	// fiq_debugger: fiq-debugger {
-+	// 	compatible = "rockchip,fiq-debugger";
-+	// 	rockchip,serial-id = <2>;
-+	// 	rockchip,signal-irq = <182>;
-+	// 	rockchip,wake-irq = <0>;
-+	// 	rockchip,irq-mode-enable = <1>;
-+	// 	rockchip,baudrate = <1500000>;
-+	// 	pinctrl-names = "default";
-+	// 	pinctrl-0 = <&uart2c_xfer>;
-+	// };
 +
 +	clkin_gmac: clkin-gmac {
 +		compatible = "fixed-clock";
@@ -69,20 +75,11 @@ index 000000000..2fd50ed10
 +	vcc5v0_sys: vcc5v0-sys {
 +		compatible = "regulator-fixed";
 +		regulator-name = "vcc5v0_sys";
++		gpio = <&gpio4 RK_PD1 GPIO_ACTIVE_HIGH>;
 +		regulator-min-microvolt = <5000000>;
 +		regulator-max-microvolt = <5000000>;
 +		regulator-always-on;
 +		regulator-boot-on;
-+	};
-+
-+	vcc5v0_host: vcc5v0-host {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc5v0_host";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpio = <&gpio4 RK_PD1 GPIO_ACTIVE_HIGH>;
-+		regulator-always-on;
-+		enable-active-high;
 +	};
 +
 +	vcc_sys: vcc-sys {
@@ -122,41 +119,6 @@ index 000000000..2fd50ed10
 +		regulator-boot-on;
 +	};
 +
-+	usb_power: usb-power {
-+		compatible = "regulator-fixed";
-+		regulator-name = "usb_power";
-+		gpio = <&gpio1 RK_PA0 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	rt5651_sound: rt5651-sound {
-+		compatible = "simple-audio-card";
-+		simple-audio-card,name = "realtek,rt5651-codec";
-+		simple-audio-card,format = "i2s";
-+		simple-audio-card,mclk-fs = <256>;
-+		simple-audio-card,widgets =
-+			"Microphone", "Mic Jack",
-+			"Headphone", "Headphone Jack";
-+		simple-audio-card,routing =
-+			"Mic Jack", "MICBIAS1",
-+			"IN1P", "Mic Jack",
-+			"Headphone Jack", "HPOL",
-+			"Headphone Jack", "HPOR";
-+		simple-audio-card,cpu {
-+			sound-dai = <&i2s1>;
-+		};
-+		simple-audio-card,codec {
-+			sound-dai = <&rt5651>;
-+		};
-+	};
-+
-+	wireless_wlan: wireless-wlan {
-+		compatible = "wlan-platdata";
-+		rockchip,grf = <&grf>;
-+		wifi_chip_type = "ap6212";
-+		WIFI,host_wake_irq = <&gpio0 RK_PA3 GPIO_ACTIVE_HIGH>;
-+		status = "okay";
-+	};
-+
 +	sdio_pwrseq: sdio-pwrseq {
 +		compatible = "mmc-pwrseq-simple";
 +		clocks = <&rk808 1>;
@@ -165,63 +127,8 @@ index 000000000..2fd50ed10
 +	};
 +};
 +
-+&cpu_l0 {
-+	cpu-supply = <&vdd_cpu_l>;
-+};
-+
-+&cpu_l1 {
-+	cpu-supply = <&vdd_cpu_l>;
-+};
-+
-+&cpu_l2 {
-+	cpu-supply = <&vdd_cpu_l>;
-+};
-+
-+&cpu_l3 {
-+	cpu-supply = <&vdd_cpu_l>;
-+};
-+
-+&cpu_b0 {
-+	cpu-supply = <&vdd_cpu_b>;
-+};
-+
-+&cpu_b1 {
-+	cpu-supply = <&vdd_cpu_b>;
-+};
-+
-+&gpu {
-+	mali-supply = <&vdd_gpu>;
-+	status = "okay";
-+};
-+
-+&hdmi {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&hdmi_cec>;
-+	ddc-i2c-bus = <&i2c3>;
-+	status = "okay";
-+};
-+
-+&hdmi_sound {
-+	status = "okay";
-+};
-+
-+&gmac {
-+	phy-supply = <&vcc_phy>;
-+	phy-mode = "rgmii";
-+	clock_in_out = "input";
-+	snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
-+	snps,reset-active-low;
-+	snps,reset-delays-us = <0 10000 50000>;
-+	assigned-clocks = <&cru SCLK_RMII_SRC>;
-+	assigned-clock-parents = <&clkin_gmac>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&rgmii_pins>;
-+	tx_delay = <0x23>;
-+	rx_delay = <0x26>;
-+	status = "okay";
-+};
-+
 +&i2c0 {
++
 +	i2c-scl-rising-time-ns = <180>;
 +	i2c-scl-falling-time-ns = <30>;
 +	clock-frequency = <400000>;
@@ -274,7 +181,7 @@ index 000000000..2fd50ed10
 +		rockchip,system-power-controller;
 +		wakeup-source;
 +		#clock-cells = <1>;
-+		clock-output-names = "rk808-clkout1", "rk808-clkout2";
++		clock-output-names = "rk808-clkout1\0rk808-clkout2";
 +		vcc1-supply = <&vcc_sys>;
 +		vcc2-supply = <&vcc_sys>;
 +		vcc3-supply = <&vcc_sys>;
@@ -287,6 +194,7 @@ index 000000000..2fd50ed10
 +		vcc11-supply = <&vcc_sys>;
 +		vcc12-supply = <&vcc3v3_sys>;
 +		vddio-supply = <&vcc_3v0>;
++		status = "okay";
 +
 +		regulators {
 +
@@ -462,40 +370,6 @@ index 000000000..2fd50ed10
 +	};
 +};
 +
-+&i2c1 {
-+	i2c-scl-rising-time-ns = <140>;
-+	i2c-scl-falling-time-ns = <30>;
-+	status = "okay";
-+
-+	rt5651: rt5651@1a {
-+		compatible = "rockchip,rt5651"; 
-+		reg = <0x1a>;
-+		clocks = <&cru SCLK_I2S_8CH_OUT>;
-+		clock-names = "mclk";
-+		hp-det-gpio = <&gpio4 RK_PD4 GPIO_ACTIVE_LOW>;
-+		spk-con-gpio = <&gpio0 RK_PB3 GPIO_ACTIVE_HIGH>;
-+		#sound-dai-cells = <0>;
-+	};
-+};
-+
-+&i2c3 {
-+	i2c-scl-rising-time-ns = <450>;
-+	i2c-scl-falling-time-ns = <15>;
-+	rockchip,defaultmode = <16>;
-+	status = "okay";
-+};
-+
-+&i2s1 {
-+	rockchip,playback-channels = <8>;
-+	rockchip,capture-channels = <8>;
-+	#sound-dai-cells = <0>;
-+	status = "okay";
-+};
-+
-+&i2s2 {
-+	status = "okay";
-+};
-+
 +&sdio0 {
 +	num-slots = <1>;
 +	bus-width = <4>;
@@ -539,30 +413,6 @@ index 000000000..2fd50ed10
 +	status = "okay";
 +};
 +
-+&pcie_phy {
-+	status = "okay";
-+};
-+
-+&pcie0 {
-+	num-lanes = <4>;
-+	pinctrl-0 = <&pcie_clkreqnb_cpm>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&io_domains {
-+	bt656-supply = <&vcc1v8_dvp>;
-+	audio-supply = <&vcca1v8_codec>;
-+	sdmmc-supply = <&vcc_sd>;
-+	gpio1830-supply = <&vcc_3v0>;
-+	status = "okay";
-+};
-+
-+&pmu_io_domains {
-+	pmu1830-supply = <&vcc_3v0>;
-+	status = "okay";
-+};
-+
 +&saradc {
 +	vref-supply = <&vcc_1v8>;
 +	status = "okay";
@@ -579,120 +429,92 @@ index 000000000..2fd50ed10
 +	status = "okay";
 +};
 +
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_xfer>, <&uart0_cts>, <&uart0_rts>;
-+	uart-has-rtscts;
-+	status = "okay";
-+
-+	bluetooth {
-+		compatible = "brcm,bcm43438-bt";
-+		clocks = <&rk808 1>;
-+		clock-names = "lpo";
-+		uart_rts_gpios = <&gpio2 RK_PC3 GPIO_ACTIVE_LOW>;
-+		BT,reset_gpio = <&gpio0 RK_PB1 GPIO_ACTIVE_HIGH>;
-+		BT,wake_gpio = <&gpio2 RK_PD2 GPIO_ACTIVE_HIGH>;
-+		BT,wake_host_irq = <&gpio0 RK_PA4 GPIO_ACTIVE_HIGH>;
-+		status = "okay";
-+	};
-+};
-+
 +&uart2 {
 +	status = "okay";
 +};
-+
-+&tcphy0 {
-+	status = "okay";
-+};
-+
-+&tcphy1 {
-+	status = "okay";
-+};
-+
-+&u2phy0 {
-+	status = "okay";
-+
-+	u2phy0_otg: otg-port {
-+		status = "okay";
-+	};
-+
-+	u2phy0_host: host-port {
-+		phy-supply = <&vcc5v0_host>;
-+		status = "okay";
-+	};
-+};
-+
-+&u2phy1 {
-+	status = "okay";
-+
-+	u2phy1_otg: otg-port {
-+		status = "okay";
-+	};
-+
-+	u2phy1_host: host-port {
-+		phy-supply = <&vcc5v0_host>;
-+		status = "okay";
-+	};
-+};
-+
-+&usbdrd3_0 {
-+	extcon = <&u2phy0>;
-+	status = "okay";
-+};
-+
-+&usbdrd_dwc3_0 {
-+	dr_mode = "host";
-+	status = "okay";
-+};
-+
-+&usbdrd3_1 {
-+	status = "okay";
-+};
-+
-+&usbdrd_dwc3_1 {
-+	dr_mode = "host";
-+	status = "okay";
-+};
-+
-+&usb_host0_ehci {
-+	status = "okay";
-+};
-+
-+&usb_host0_ohci {
-+	status = "okay";
-+};
-+
-+&usb_host1_ehci {
-+	status = "okay";
-+};
-+
-+&usb_host1_ohci {
-+	status = "okay";
-+};
-+
-+&vdec_mmu {
-+	status = "okay";
-+};
-+
-+&vpu_mmu {
-+	status = "okay";
-+};
-+
-+&vopb {
-+	status = "okay";
-+};
-+
-+&vopb_mmu {
-+	status = "okay";
-+};
-+
-+&vopl {
-+	status = "disable";
-+};
-+
-+&vopl_mmu {
-+	status = "okay";
-+};
+diff --git a/configs/tb-ls3399-rk3399_defconfig b/configs/tb-ls3399-rk3399_defconfig
+new file mode 100644
+index 0000000000..88ecc7b469
+--- /dev/null
++++ b/configs/tb-ls3399-rk3399_defconfig
+@@ -0,0 +1,77 @@
++CONFIG_ARM=y
++CONFIG_SKIP_LOWLEVEL_INIT=y
++CONFIG_COUNTER_FREQUENCY=24000000
++CONFIG_ARCH_ROCKCHIP=y
++CONFIG_SYS_TEXT_BASE=0x00200000
++CONFIG_NR_DRAM_BANKS=1
++CONFIG_ENV_OFFSET=0x3F8000
++CONFIG_DEFAULT_DEVICE_TREE="rk3399-tb-ls3399"
++CONFIG_ROCKCHIP_RK3399=y
++CONFIG_TARGET_EVB_RK3399=y
++CONFIG_DEBUG_UART_BASE=0xFF1A0000
++CONFIG_DEBUG_UART_CLOCK=24000000
++CONFIG_SYS_LOAD_ADDR=0x800800
++CONFIG_DEBUG_UART=y
++CONFIG_DEFAULT_FDT_FILE="rockchip/rk3399-tb-ls3399.dtb"
++CONFIG_DISPLAY_BOARDINFO_LATE=y
++# CONFIG_SPL_RAW_IMAGE_SUPPORT is not set
++CONFIG_SPL_STACK_R=y
++CONFIG_SPL_STACK_R_MALLOC_SIMPLE_LEN=0x10000
++CONFIG_TPL=y
++CONFIG_CMD_BOOTZ=y
++CONFIG_CMD_GPT=y
++CONFIG_CMD_MMC=y
++CONFIG_CMD_USB=y
++# CONFIG_CMD_SETEXPR is not set
++CONFIG_CMD_TIME=y
++CONFIG_SPL_OF_CONTROL=y
++CONFIG_OF_SPL_REMOVE_PROPS="pinctrl-0 pinctrl-names clock-names interrupt-parent assigned-clocks assigned-clock-rates assigned-clock-parents"
++CONFIG_ENV_IS_IN_MMC=y
++CONFIG_SYS_RELOC_GD_ENV_ADDR=y
++CONFIG_NET_RANDOM_ETHADDR=y
++CONFIG_ROCKCHIP_GPIO=y
++CONFIG_SYS_I2C_ROCKCHIP=y
++CONFIG_MISC=y
++CONFIG_MMC_HS400_SUPPORT=y
++CONFIG_MMC_DW=y
++CONFIG_MMC_DW_ROCKCHIP=y
++CONFIG_MMC_SDHCI=y
++CONFIG_MMC_SDHCI_SDMA=y
++CONFIG_MMC_SDHCI_ROCKCHIP=y
++CONFIG_SF_DEFAULT_SPEED=20000000
++CONFIG_DM_ETH=y
++CONFIG_ETH_DESIGNWARE=y
++CONFIG_GMAC_ROCKCHIP=y
++CONFIG_PHY_ROCKCHIP_INNO_USB2=y
++CONFIG_PHY_ROCKCHIP_TYPEC=y
++CONFIG_PMIC_RK8XX=y
++CONFIG_REGULATOR_PWM=y
++CONFIG_REGULATOR_RK8XX=y
++CONFIG_PWM_ROCKCHIP=y
++CONFIG_DM_RESET=y
++CONFIG_DM_RNG=y
++CONFIG_RNG_ROCKCHIP=y
++CONFIG_BAUDRATE=1500000
++CONFIG_DEBUG_UART_SHIFT=2
++CONFIG_SYSRESET=y
++CONFIG_USB=y
++CONFIG_USB_XHCI_HCD=y
++CONFIG_USB_XHCI_DWC3=y
++CONFIG_USB_EHCI_HCD=y
++CONFIG_USB_EHCI_GENERIC=y
++CONFIG_USB_DWC3=y
++CONFIG_USB_DWC3_GENERIC=y
++CONFIG_USB_HOST_ETHER=y
++CONFIG_USB_ETHER_ASIX=y
++CONFIG_USB_ETHER_ASIX88179=y
++CONFIG_USB_ETHER_MCS7830=y
++CONFIG_USB_ETHER_RTL8152=y
++CONFIG_USB_ETHER_SMSC95XX=y
++CONFIG_DM_VIDEO=y
++# CONFIG_VIDEO_BPP8 is not set
++CONFIG_DISPLAY=y
++CONFIG_VIDEO_ROCKCHIP=y
++CONFIG_VIDEO_ROCKCHIP_MAX_YRES=1200
++CONFIG_DISPLAY_ROCKCHIP_MIPI=y
++CONFIG_SPL_TINY_MEMSET=y
++CONFIG_ERRNO_STR=y
 -- 
 Created with Armbian build tools https://github.com/armbian/build
 
