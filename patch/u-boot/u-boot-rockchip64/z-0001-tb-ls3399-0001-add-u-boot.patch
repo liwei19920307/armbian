@@ -1,36 +1,17 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: John Doe <john.doe@somewhere.on.planet>
-Date: Wed, 17 Jan 2024 20:58:33 +0800
-Subject: Patching u-boot rockchip64 files arch/arm/dts/Makefile
+Date: Thu, 18 Jan 2024 22:13:59 +0800
+Subject: Patching u-boot rockchip64 files
  arch/arm/dts/rk3399-tb-ls3399-u-boot.dtsi arch/arm/dts/rk3399-tb-ls3399.dts
  configs/tb-ls3399-rk3399_defconfig
 
 Signed-off-by: John Doe <john.doe@somewhere.on.planet>
 ---
- arch/arm/dts/Makefile                     |   3 +-
  arch/arm/dts/rk3399-tb-ls3399-u-boot.dtsi |   8 +
  arch/arm/dts/rk3399-tb-ls3399.dts         | 381 ++++++++++
  configs/tb-ls3399-rk3399_defconfig        |  77 ++
- 4 files changed, 468 insertions(+), 1 deletion(-)
+ 3 files changed, 466 insertions(+)
 
-diff --git a/arch/arm/dts/Makefile b/arch/arm/dts/Makefile
-index 4cb68c243c..25ce01784f 100644
---- a/arch/arm/dts/Makefile
-+++ b/arch/arm/dts/Makefile
-@@ -168,11 +168,12 @@ dtb-$(CONFIG_ROCKCHIP_RK3399) += \
- 	rk3399-rock-pi-4b.dtb \
- 	rk3399-rock-pi-4c.dtb \
- 	rk3399-rock960.dtb \
- 	rk3399-rockpro64.dtb \
- 	rk3399pro-rock-pi-n10.dtb \
--	rk3399-sw799.dtb
-+	rk3399-sw799.dtb \
-+	rk3399-tb-ls3399.dtb
- 
- dtb-$(CONFIG_ROCKCHIP_RK3568) += \
- 	rk3568-evb.dtb
- 
- dtb-$(CONFIG_ROCKCHIP_RV1108) += \
 diff --git a/arch/arm/dts/rk3399-tb-ls3399-u-boot.dtsi b/arch/arm/dts/rk3399-tb-ls3399-u-boot.dtsi
 new file mode 100644
 index 0000000000..79799b1928
