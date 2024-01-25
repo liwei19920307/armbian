@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: John Doe <john.doe@somewhere.on.planet>
-Date: Tue, 23 Jan 2024 19:15:31 +0800
+Date: Thu, 25 Jan 2024 10:51:27 +0800
 Subject: Patching kernel rockchip64 files
  arch/arm64/boot/dts/rockchip/rk3399-sw799.dts
 
