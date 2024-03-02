@@ -62,6 +62,37 @@ function create_new_rootfs_cache_via_debootstrap() {
 
 	# @TODO: one day: https://gitlab.mister-muffin.de/josch/mmdebstrap/src/branch/main/mmdebstrap
 
+	# Obtain the latest debootstrap (which is just a shell script) from Debian or Ubuntu's git at the latest development version
+	declare debootstrap_bin="" debootstrap_version="" debootstrap_wanted_dir="" debootstrap_default_script=""
+
+	display_alert "Preparing debootstrap" "for ${DISTRIBUTION}'s ${RELEASE}" "info"
+	case "${DISTRIBUTION}" in
+		Ubuntu)
+			GIT_FIXED_WORKDIR="debootstrap-ubuntu-devel" fetch_from_repo "https://git.launchpad.net/ubuntu/+source/debootstrap" "debootstrap-ubuntu-devel" "branch:ubuntu/devel"
+			debootstrap_wanted_dir="${SRC}/cache/sources/debootstrap-ubuntu-devel"
+			debootstrap_default_script="gutsy"
+			;;
+		Debian)
+			GIT_FIXED_WORKDIR="debootstrap-debian-devel" fetch_from_repo "https://salsa.debian.org/installer-team/debootstrap.git" "debootstrap-debian-devel" "branch:master"
+			debootstrap_wanted_dir="${SRC}/cache/sources/debootstrap-debian-devel"
+			debootstrap_default_script="sid"
+			;;
+		*)
+			exit_with_error "Unknown distribution for debootstrap" "${DISTRIBUTION}"
+			;;
+	esac
+
+	debootstrap_bin="${debootstrap_wanted_dir}/debootstrap"
+	debootstrap_version="$(sed 's/.*(\(.*\)).*/\1/; q' "${debootstrap_wanted_dir}/debian/changelog")"
+	run_host_command_logged chmod a+x "${debootstrap_bin}"
+	display_alert "Debootstrap version" "'${debootstrap_version}' for ${debootstrap_bin}" "info"
+
+	# check if the debootstrap has the scripts/${RELEASE} script present, otherwise symlink it to debootstrap_default_script
+	if [[ ! -f "${debootstrap_wanted_dir}/scripts/${RELEASE}" ]]; then
+		display_alert "Symlinking" "debootstrap scripts/${RELEASE} to scripts/${debootstrap_default_script}" "info"
+		run_host_command_logged ln -sv "${debootstrap_wanted_dir}/scripts/${debootstrap_default_script}" "${debootstrap_wanted_dir}/scripts/${RELEASE}"
+	fi
+
 	display_alert "Installing base system with ${#AGGREGATED_PACKAGES_DEBOOTSTRAP[@]} packages" "Stage 1/2" "info"
 	cd "${SDCARD}" || exit_with_error "cray-cray about SDCARD" "${SDCARD}" # this will prevent error sh: 0: getcwd() failed
 
@@ -71,19 +102,6 @@ function create_new_rootfs_cache_via_debootstrap() {
 		"'--include=${AGGREGATED_PACKAGES_DEBOOTSTRAP_COMMA}'"      # from aggregation.py
 		"'--components=${AGGREGATED_DEBOOTSTRAP_COMPONENTS_COMMA}'" # from aggregation.py
 	)
-
-	# Hacking deboostrap to support future releases
-	# Install most recent version from build framework blob section
-	local debootstrap_home="/usr/share/debootstrap/scripts"
-	if [[ ! -L "${debootstrap_home}/${RELEASE}" && ! -e "${debootstrap_home}/${RELEASE}" && "$(debootstrap --version)" != *1.0.134* ]]; then
-		display_alert "Installing new version of deboostrap to the host" "${HOSTRELEASE}" "wrn"
-		if [[ "$(cat /etc/os-release | grep "^ID=" | cut -d"=" -f2)" == "ubuntu" ]]; then
-		run_host_command_logged dpkg -i "${SRC}/packages/blobs/debootstrap/debootstrap_1.0.134ubuntu1_all.deb"
-		else
-		run_host_command_logged dpkg -i "${SRC}/packages/blobs/debootstrap/debootstrap_1.0.134_all.deb"
-		fi
-		run_host_command_logged apt -f install
-	fi
 
 	# Small detour for local apt caching option.
 	local_apt_deb_cache_prepare "before debootstrap" # sets LOCAL_APT_CACHE_INFO
@@ -95,8 +113,9 @@ function create_new_rootfs_cache_via_debootstrap() {
 
 	deboostrap_arguments+=("${RELEASE}" "${SDCARD}/" "${debootstrap_apt_mirror}") # release, path and mirror; always last, positional arguments.
 
-	run_host_command_logged debootstrap "${deboostrap_arguments[@]}" || {
-		exit_with_error "Debootstrap first stage failed" "${RELEASE} ${DESKTOP_APPGROUPS_SELECTED} ${DESKTOP_ENVIRONMENT} ${BUILD_MINIMAL}"
+	# Set DEBOOTSTRAP_DIR only for this invocation; if we instead export it, the 2nd stage will fail
+	run_host_command_logged "DEBOOTSTRAP_DIR='${debootstrap_wanted_dir}'" "${debootstrap_bin}" "${deboostrap_arguments[@]}" || {
+		exit_with_error "Debootstrap first stage failed" "${debootstrap_bin} ${RELEASE} ${DESKTOP_APPGROUPS_SELECTED} ${DESKTOP_ENVIRONMENT} ${BUILD_MINIMAL}"
 	}
 	[[ ! -f ${SDCARD}/debootstrap/debootstrap ]] && exit_with_error "Debootstrap first stage did not produce marker file"
 
