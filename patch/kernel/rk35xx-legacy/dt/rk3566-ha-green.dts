@@ -179,6 +179,10 @@
 	status = "okay";
 };
 
+&display_subsystem {
+	status = "okay";
+};
+
 &hdmi {
 	status = "okay";
 };
@@ -188,6 +192,11 @@
 };
 
 &hdmi_sound {
+	status = "okay";
+};
+
+&route_hdmi {
+	connect = <&vp0_out_hdmi>;
 	status = "okay";
 };
 
@@ -580,13 +589,18 @@
 };
 
 &vop {
-	assigned-clocks = <&cru DCLK_VOP0>, <&cru DCLK_VOP1>, <&cru DCLK_VOP2>;
-	assigned-clock-parents = <&pmucru PLL_HPLL>, <&cru PLL_VPLL>, <&cru PLL_GPLL>;
+	assigned-clocks = <&cru DCLK_VOP0>, <&cru DCLK_VOP1>;
+	assigned-clock-parents = <&pmucru PLL_HPLL>, <&cru PLL_VPLL>;
 	status = "okay";
 };
 
 &vop_mmu {
 	status = "okay";
+};
+
+&vp0 {
+	rockchip,plane-mask = <(1 << ROCKCHIP_VOP2_CLUSTER0 | 1 << ROCKCHIP_VOP2_ESMART0)>;
+	rockchip,primary-plane = <ROCKCHIP_VOP2_ESMART0>;
 };
 
 &u2phy0_host {
