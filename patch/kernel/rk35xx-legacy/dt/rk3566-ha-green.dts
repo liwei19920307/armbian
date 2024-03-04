@@ -522,6 +522,7 @@
 &uart2 {
 	status = "disabled";
 };
+
 &iep {
 	status = "okay";
 };
