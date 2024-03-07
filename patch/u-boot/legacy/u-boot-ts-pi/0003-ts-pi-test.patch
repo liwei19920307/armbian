@@ -1,0 +1,44 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: John Doe <john.doe@somewhere.on.planet>
+Date: Mon, 4 Mar 2024 08:40:23 +0800
+Subject: Patching u-boot rk35xx files arch/arm/dts/rk3566-ts-pi.dts
+
+Signed-off-by: John Doe <john.doe@somewhere.on.planet>
+---
+ arch/arm/dts/rk3566-ts-pi.dts | 16 ----------
+ 1 file changed, 16 deletions(-)
+
+diff --git a/arch/arm/dts/rk3566-ts-pi.dts b/arch/arm/dts/rk3566-ts-pi.dts
+index ae42a5668c..4822b3220c 100644
+--- a/arch/arm/dts/rk3566-ts-pi.dts
++++ b/arch/arm/dts/rk3566-ts-pi.dts
+@@ -296,26 +296,10 @@
+ 				regulator-state-mem {
+ 					regulator-off-in-suspend;
+ 				};
+ 			};
+ 		};
+-
+-		rk809_codec: codec {
+-			#sound-dai-cells = <0>;
+-			compatible = "rockchip,rk809-codec", "rockchip,rk817-codec";
+-			clocks = <&cru I2S1_MCLKOUT>;
+-			clock-names = "mclk";
+-			assigned-clocks = <&cru I2S1_MCLKOUT>, <&cru I2S1_MCLK_TX_IOE>;
+-			assigned-clock-rates = <12288000>;
+-			assigned-clock-parents = <&cru I2S1_MCLKOUT_TX>, <&cru I2S1_MCLKOUT_TX>;
+-			pinctrl-names = "default";
+-			pinctrl-0 = <&i2s1m0_mclk>;
+-			hp-volume = <20>;
+-			spk-volume = <3>;
+-			mic-in-differential;
+-			status = "okay";
+-		};
+ 	};
+ };
+ 
+ &pmu_io_domains {
+ 	pmuio2-supply = <&vcc3v3_pmu>;
+-- 
+Created with Armbian build tools https://github.com/armbian/build
+
