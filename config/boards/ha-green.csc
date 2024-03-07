@@ -2,7 +2,7 @@
 BOARD_NAME="HA Green"
 BOARDFAMILY="rk35xx"
 BOOTCONFIG="ha-green-rk3566_defconfig"
-KERNEL_TARGET="legacy,current"
+KERNEL_TARGET="legacy,vendor"
 BOOT_LOGO="desktop"
 BOOT_FDT_FILE="rockchip/rk3566-ha-green.dtb"
 IMAGE_PARTITION_TABLE="gpt"
