@@ -13,6 +13,11 @@
 		bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0";
 	};
 
+	aliases: aliases {
+		mmc0 = &sdhci;
+		mmc1 = &sdmmc0;
+	};
+
 	fiq_debugger: fiq-debugger {
 		compatible = "rockchip,fiq-debugger";
 		rockchip,serial-id = <2>;
@@ -110,8 +115,29 @@
 		};
 	};
 
-	test_power: test-power {
-		status = "okay";
+	leds: leds {
+		compatible = "gpio-leds";
+
+		rgb_led_r: rgb-led-r {
+			gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_LOW>;
+			function = LED_FUNCTION_HEARTBEAT;
+			color = <LED_COLOR_ID_RED>;
+			linux,default-trigger = "heartbeat";
+		};
+
+		rgb_led_g: rgb-led-g {
+			gpios = <&gpio1 RK_PB1 GPIO_ACTIVE_LOW>;
+			function = LED_FUNCTION_POWER;
+			color = <LED_COLOR_ID_GREEN>;
+			linux,default-trigger = "default-on";
+		};
+		
+		rgb_led_b: rgb-led-b {
+			gpios = <&gpio1 RK_PB0 GPIO_ACTIVE_LOW>;
+			function = LED_FUNCTION_ACTIVITY;
+			color = <LED_COLOR_ID_BLUE>;
+			linux,default-trigger = "activity";
+		};
 	};
 };
 

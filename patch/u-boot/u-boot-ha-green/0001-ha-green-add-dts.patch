@@ -1,46 +1,30 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: John Doe <john.doe@somewhere.on.planet>
-Date: Fri, 1 Mar 2024 15:57:06 +0800
+Date: Mon, 25 Mar 2024 10:18:37 +0800
 Subject: Patching u-boot rk35xx files arch/arm/dts/rk3566-ha-green-u-boot.dtsi
  arch/arm/dts/rk3566-ha-green.dts configs/ha-green-rk3566_defconfig
 
 Signed-off-by: John Doe <john.doe@somewhere.on.planet>
 ---
- arch/arm/dts/rk3566-ha-green-u-boot.dtsi |  18 +
- arch/arm/dts/rk3566-ha-green.dts         | 365 ++++++++++
+ arch/arm/dts/rk3566-ha-green-u-boot.dtsi |   1 +
+ arch/arm/dts/rk3566-ha-green.dts         | 345 ++++++++++
  configs/ha-green-rk3566_defconfig        | 114 +++
- 3 files changed, 497 insertions(+)
+ 3 files changed, 460 insertions(+)
 
 diff --git a/arch/arm/dts/rk3566-ha-green-u-boot.dtsi b/arch/arm/dts/rk3566-ha-green-u-boot.dtsi
 new file mode 100644
-index 0000000000..d1b5551be3
+index 00000000000..17d21222e25
 --- /dev/null
 +++ b/arch/arm/dts/rk3566-ha-green-u-boot.dtsi
-@@ -0,0 +1,18 @@
+@@ -0,0 +1 @@
 +#include "rk356x-u-boot.dtsi"
-+
-+/ {
-+	chosen {
-+		stdout-path = &uart2;
-+	};
-+};
-+
-+&sdhci {
-+	cap-mmc-highspeed;
-+	mmc-ddr-1_8v;
-+};
-+
-+&uart2 {
-+	clock-frequency = <24000000>;
-+	bootph-all;
-+	status = "okay";
-+};
+\ No newline at end of file
 diff --git a/arch/arm/dts/rk3566-ha-green.dts b/arch/arm/dts/rk3566-ha-green.dts
 new file mode 100644
-index 0000000000..9e4d86606b
+index 00000000000..fbeb66334f3
 --- /dev/null
 +++ b/arch/arm/dts/rk3566-ha-green.dts
-@@ -0,0 +1,365 @@
+@@ -0,0 +1,345 @@
 +/dts-v1/;
 +#include <dt-bindings/gpio/gpio.h>
 +#include "rk3566.dtsi"
@@ -49,7 +33,12 @@ index 0000000000..9e4d86606b
 +	model = "RK3566 HA Green";
 +	compatible = "rockchip,rk3566-ha-green", "rockchip,rk3566";
 +
-+	aliases {
++	chosen: chosen {
++		stdout-path = &uart2;
++		u-boot,spl-boot-order = &sdmmc0, &sdhci;
++	};
++
++	aliases: aliases {
 +		mmc0 = &sdhci;
 +		mmc1 = &sdmmc0;
 +	};
@@ -82,35 +71,6 @@ index 0000000000..9e4d86606b
 +		regulator-max-microvolt = <3300000>;
 +		vin-supply = <&dc_12v>;
 +	};
-+};
-+
-+&combphy1 {
-+	status = "okay";
-+};
-+
-+&combphy2 {
-+	status = "okay";
-+};
-+
-+&cpu0 {
-+	cpu-supply = <&vdd_cpu>;
-+};
-+
-+&cpu1 {
-+	cpu-supply = <&vdd_cpu>;
-+};
-+
-+&cpu2 {
-+	cpu-supply = <&vdd_cpu>;
-+};
-+
-+&cpu3 {
-+	cpu-supply = <&vdd_cpu>;
-+};
-+
-+&gpu {
-+	mali-supply = <&vdd_gpu>;
-+	status = "okay";
 +};
 +
 +&i2c0 {
@@ -157,6 +117,10 @@ index 0000000000..9e4d86606b
 +		vcc7-supply = <&vcc3v3_sys>;
 +		vcc8-supply = <&vcc3v3_sys>;
 +		vcc9-supply = <&vcc3v3_sys>;
++
++		pwrkey {
++			status = "okay";
++		};
 +
 +		regulators {
 +			vdd_logic: DCDC_REG1 {
@@ -408,7 +372,7 @@ index 0000000000..9e4d86606b
 +};
 diff --git a/configs/ha-green-rk3566_defconfig b/configs/ha-green-rk3566_defconfig
 new file mode 100644
-index 0000000000..d66d51aa08
+index 00000000000..a365536eb7e
 --- /dev/null
 +++ b/configs/ha-green-rk3566_defconfig
 @@ -0,0 +1,114 @@
@@ -526,6 +490,7 @@ index 0000000000..d66d51aa08
 +CONFIG_USB_DWC3=y
 +CONFIG_USB_DWC3_GENERIC=y
 +CONFIG_ERRNO_STR=y
+\ No newline at end of file
 -- 
 Created with Armbian build tools https://github.com/armbian/build
 

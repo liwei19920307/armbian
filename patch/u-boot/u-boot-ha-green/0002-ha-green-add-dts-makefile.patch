@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: John Doe <john.doe@somewhere.on.planet>
-Date: Fri, 1 Mar 2024 15:59:48 +0800
+Date: Mon, 25 Mar 2024 10:19:35 +0800
 Subject: Patching u-boot rk35xx files arch/arm/dts/Makefile
 
 Signed-off-by: John Doe <john.doe@somewhere.on.planet>
@@ -9,7 +9,7 @@ Signed-off-by: John Doe <john.doe@somewhere.on.planet>
  1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm/dts/Makefile b/arch/arm/dts/Makefile
-index 7926776c53..198b0a7ef0 100644
+index 7926776c533..198b0a7ef04 100644
 --- a/arch/arm/dts/Makefile
 +++ b/arch/arm/dts/Makefile
 @@ -184,10 +184,11 @@ dtb-$(CONFIG_ROCKCHIP_RK3568) += \

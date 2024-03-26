@@ -12,6 +12,11 @@
 		bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0";
 	};
 
+	aliases: aliases {
+		mmc0 = &sdhci;
+		mmc1 = &sdmmc0;
+	};
+
 	fiq_debugger: fiq-debugger {
 		compatible = "rockchip,fiq-debugger";
 		rockchip,serial-id = <2>;
@@ -63,7 +68,7 @@
 		vin-supply = <&dc_12v>;
 	};
 
-	leds {
+	leds: leds {
 		compatible = "gpio-leds";
 
 		led_power: led-power {
@@ -108,10 +113,6 @@
 		simple-audio-card,codec {
 				sound-dai = <&hdmi>;
 		};
-	};
-
-	test-power {
-		status = "okay";
 	};
 };
 

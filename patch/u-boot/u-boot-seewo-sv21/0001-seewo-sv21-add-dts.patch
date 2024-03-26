@@ -1,38 +1,37 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: John Doe <john.doe@somewhere.on.planet>
-Date: Mon, 25 Mar 2024 10:37:52 +0800
-Subject: Patching u-boot rk35xx files arch/arm/dts/rk3566-ts-pi.dts
- configs/ts-pi-rk3566_defconfig
+Date: Mon, 25 Mar 2024 11:35:20 +0800
+Subject: Patching u-boot rk35xx files arch/arm/dts/rk3568-seewo-sv21.dts
+ configs/seewo-sv21-rk3568_defconfig
 
 Signed-off-by: John Doe <john.doe@somewhere.on.planet>
 ---
- arch/arm/dts/rk3566-ts-pi.dts  | 364 ++++++++++
- configs/ts-pi-rk3566_defconfig | 237 ++++++
- 2 files changed, 601 insertions(+)
+ arch/arm/dts/rk3568-seewo-sv21.dts  | 379 ++++++++++
+ configs/seewo-sv21-rk3568_defconfig | 237 ++++++
+ 2 files changed, 616 insertions(+)
 
-diff --git a/arch/arm/dts/rk3566-ts-pi.dts b/arch/arm/dts/rk3566-ts-pi.dts
+diff --git a/arch/arm/dts/rk3568-seewo-sv21.dts b/arch/arm/dts/rk3568-seewo-sv21.dts
 new file mode 100644
-index 00000000000..64ab218d61e
+index 00000000000..ba2330f6c13
 --- /dev/null
-+++ b/arch/arm/dts/rk3566-ts-pi.dts
-@@ -0,0 +1,364 @@
++++ b/arch/arm/dts/rk3568-seewo-sv21.dts
+@@ -0,0 +1,379 @@
 +/dts-v1/;
 +#include "rk3568.dtsi"
 +#include "rk3568-u-boot.dtsi"
 +#include <dt-bindings/input/input.h>
 +
 +/ {
-+	model = "RK3566 TS Pi";
-+	compatible = "rockchip,rk3566-tspi", "rockchip,rk3566";
++	model = "RK3568 Seewo SV21";
++	compatible = "rockchip,rk3568-seewo-sv21", "rockchip,rk3568";
 +
 +	chosen: chosen {
 +		stdout-path = &uart2;
-+		u-boot,spl-boot-order = &sdmmc0, &sdhci;
++		u-boot,spl-boot-order = &sdhci;
 +	};
 +
 +	aliases: aliases {
 +		mmc0 = &sdhci;
-+		mmc1 = &sdmmc0;
 +	};
 +
 +	dc_12v: dc-12v {
@@ -64,7 +63,7 @@ index 00000000000..64ab218d61e
 +		regulator-boot-on;
 +		regulator-min-microvolt = <3300000>;
 +		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&vcc5v0_sys>;
++		vin-supply = <&dc_12v>;
 +	};
 +
 +	adc_keys: adc-keys {
@@ -79,7 +78,7 @@ index 00000000000..64ab218d61e
 +			u-boot,dm-spl;
 +			linux,code = <KEY_VOLUMEUP>;
 +			label = "volume up";
-+			press-threshold-microvolt = <108>;
++			press-threshold-microvolt = <1750>;
 +		};
 +	};
 +};
@@ -88,20 +87,21 @@ index 00000000000..64ab218d61e
 +	u-boot,dm-pre-reloc;
 +	status = "okay";
 +
-+	vdd_cpu: tcs4525@1c {
++	vdd_cpu: syr837@40 {
 +		u-boot,dm-pre-reloc;
-+		compatible = "tcs,tcs452x";
-+		reg = <0x1c>;
++		compatible = "silergy,syr827";
++		reg = <0x40>;
 +		vin-supply = <&vcc5v0_sys>;
 +		regulator-compatible = "fan53555-reg";
 +		regulator-name = "vdd_cpu";
++		vsel-gpios = <&gpio0 RK_PA2 GPIO_ACTIVE_HIGH>;
 +		regulator-min-microvolt = <712500>;
-+		regulator-max-microvolt = <1390000>;
-+		regulator-init-microvolt = <900000>;
-+		regulator-ramp-delay = <2300>;
++		regulator-max-microvolt = <1500000>;
++		regulator-ramp-delay = <1000>;
 +		fcs,suspend-voltage-selector = <1>;
-+		regulator-boot-on;
 +		regulator-always-on;
++		regulator-initial-state = <3>;
++
 +		regulator-state-mem {
 +			u-boot,dm-pre-reloc;
 +			regulator-off-in-suspend;
@@ -113,12 +113,13 @@ index 00000000000..64ab218d61e
 +		compatible = "rockchip,rk809";
 +		reg = <0x20>;
 +		interrupt-parent = <&gpio0>;
-+		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
++		interrupts = <RK_PA3 IRQ_TYPE_LEVEL_LOW>;
 +
 +		rockchip,system-power-controller;
 +		wakeup-source;
 +		#clock-cells = <1>;
 +		clock-output-names = "rk808-clkout1", "rk808-clkout2";
++
 +		pmic-reset-func = <0>;
 +		not-save-power-en = <1>;
 +
@@ -141,14 +142,16 @@ index 00000000000..64ab218d61e
 +			u-boot,dm-pre-reloc;
 +
 +			vdd_logic: DCDC_REG1 {
++				u-boot,dm-pre-reloc;
 +				regulator-always-on;
 +				regulator-boot-on;
 +				regulator-min-microvolt = <500000>;
 +				regulator-max-microvolt = <1350000>;
-+				regulator-init-microvolt = <900000>;
++				regulator-init-microvolt = <925000>;
 +				regulator-ramp-delay = <6001>;
-+				regulator-initial-mode = <0x2>;
++				regulator-initial-mode = <2>;
 +				regulator-name = "vdd_logic";
++
 +				regulator-state-mem {
 +					u-boot,dm-pre-reloc;
 +					regulator-off-in-suspend;
@@ -163,8 +166,9 @@ index 00000000000..64ab218d61e
 +				regulator-max-microvolt = <1350000>;
 +				regulator-init-microvolt = <900000>;
 +				regulator-ramp-delay = <6001>;
-+				regulator-initial-mode = <0x2>;
++				regulator-initial-mode = <2>;
 +				regulator-name = "vdd_gpu";
++
 +				regulator-state-mem {
 +					u-boot,dm-pre-reloc;
 +					regulator-off-in-suspend;
@@ -175,8 +179,9 @@ index 00000000000..64ab218d61e
 +				u-boot,dm-pre-reloc;
 +				regulator-always-on;
 +				regulator-boot-on;
-+				regulator-initial-mode = <0x2>;
++				regulator-initial-mode = <2>;
 +				regulator-name = "vcc_ddr";
++
 +				regulator-state-mem {
 +					u-boot,dm-pre-reloc;
 +					regulator-on-in-suspend;
@@ -191,8 +196,9 @@ index 00000000000..64ab218d61e
 +				regulator-max-microvolt = <1350000>;
 +				regulator-init-microvolt = <900000>;
 +				regulator-ramp-delay = <6001>;
-+				regulator-initial-mode = <0x2>;
++				regulator-initial-mode = <2>;
 +				regulator-name = "vdd_npu";
++
 +				regulator-state-mem {
 +					u-boot,dm-pre-reloc;
 +					regulator-off-in-suspend;
@@ -206,6 +212,7 @@ index 00000000000..64ab218d61e
 +				regulator-min-microvolt = <900000>;
 +				regulator-max-microvolt = <900000>;
 +				regulator-name = "vdda0v9_image";
++
 +				regulator-state-mem {
 +					u-boot,dm-pre-reloc;
 +					regulator-off-in-suspend;
@@ -219,6 +226,7 @@ index 00000000000..64ab218d61e
 +				regulator-min-microvolt = <900000>;
 +				regulator-max-microvolt = <900000>;
 +				regulator-name = "vdda_0v9";
++
 +				regulator-state-mem {
 +					u-boot,dm-pre-reloc;
 +					regulator-off-in-suspend;
@@ -232,6 +240,7 @@ index 00000000000..64ab218d61e
 +				regulator-min-microvolt = <900000>;
 +				regulator-max-microvolt = <900000>;
 +				regulator-name = "vdda0v9_pmu";
++
 +				regulator-state-mem {
 +					u-boot,dm-pre-reloc;
 +					regulator-on-in-suspend;
@@ -246,6 +255,7 @@ index 00000000000..64ab218d61e
 +				regulator-min-microvolt = <3300000>;
 +				regulator-max-microvolt = <3300000>;
 +				regulator-name = "vccio_acodec";
++
 +				regulator-state-mem {
 +					u-boot,dm-pre-reloc;
 +					regulator-off-in-suspend;
@@ -256,9 +266,10 @@ index 00000000000..64ab218d61e
 +				u-boot,dm-pre-reloc;
 +				regulator-always-on;
 +				regulator-boot-on;
-+				regulator-min-microvolt = <1800000>;
++				regulator-min-microvolt = <3300000>;
 +				regulator-max-microvolt = <3300000>;
 +				regulator-name = "vccio_sd";
++
 +				regulator-state-mem {
 +					u-boot,dm-pre-reloc;
 +					regulator-off-in-suspend;
@@ -272,6 +283,7 @@ index 00000000000..64ab218d61e
 +				regulator-min-microvolt = <3300000>;
 +				regulator-max-microvolt = <3300000>;
 +				regulator-name = "vcc3v3_pmu";
++
 +				regulator-state-mem {
 +					u-boot,dm-pre-reloc;
 +					regulator-on-in-suspend;
@@ -286,6 +298,7 @@ index 00000000000..64ab218d61e
 +				regulator-min-microvolt = <1800000>;
 +				regulator-max-microvolt = <1800000>;
 +				regulator-name = "vcca_1v8";
++
 +				regulator-state-mem {
 +					u-boot,dm-pre-reloc;
 +					regulator-off-in-suspend;
@@ -299,6 +312,7 @@ index 00000000000..64ab218d61e
 +				regulator-min-microvolt = <1800000>;
 +				regulator-max-microvolt = <1800000>;
 +				regulator-name = "vcca1v8_pmu";
++
 +				regulator-state-mem {
 +					u-boot,dm-pre-reloc;
 +					regulator-on-in-suspend;
@@ -313,6 +327,7 @@ index 00000000000..64ab218d61e
 +				regulator-min-microvolt = <1800000>;
 +				regulator-max-microvolt = <1800000>;
 +				regulator-name = "vcca1v8_image";
++
 +				regulator-state-mem {
 +					u-boot,dm-pre-reloc;
 +					regulator-off-in-suspend;
@@ -326,6 +341,7 @@ index 00000000000..64ab218d61e
 +				regulator-min-microvolt = <1800000>;
 +				regulator-max-microvolt = <1800000>;
 +				regulator-name = "vcc_1v8";
++
 +				regulator-state-mem {
 +					u-boot,dm-pre-reloc;
 +					regulator-off-in-suspend;
@@ -337,6 +353,7 @@ index 00000000000..64ab218d61e
 +				regulator-always-on;
 +				regulator-boot-on;
 +				regulator-name = "vcc_3v3";
++
 +				regulator-state-mem {
 +					u-boot,dm-pre-reloc;
 +					regulator-off-in-suspend;
@@ -348,6 +365,7 @@ index 00000000000..64ab218d61e
 +				regulator-always-on;
 +				regulator-boot-on;
 +				regulator-name = "vcc3v3_sd";
++
 +				regulator-state-mem {
 +					u-boot,dm-pre-reloc;
 +					regulator-off-in-suspend;
@@ -359,12 +377,13 @@ index 00000000000..64ab218d61e
 +
 +&pmu_io_domains {
 +	u-boot,dm-pre-reloc;
++	pmuio1-supply = <&vcc3v3_pmu>;
 +	pmuio2-supply = <&vcc3v3_pmu>;
 +	vccio1-supply = <&vccio_acodec>;
 +	vccio3-supply = <&vccio_sd>;
-+	vccio4-supply = <&vcc_1v8>;
++	vccio4-supply = <&vcc_3v3>;
 +	vccio5-supply = <&vcc_3v3>;
-+	vccio6-supply = <&vcc_1v8>;
++	vccio6-supply = <&vcc_3v3>;
 +	vccio7-supply = <&vcc_3v3>;
 +	status = "okay";
 +};
@@ -373,19 +392,15 @@ index 00000000000..64ab218d61e
 +	status = "okay";
 +};
 +
-+&uart1 {
-+	status = "okay";
-+};
-+
 +&uart2 {
 +	status = "okay";
 +};
 \ No newline at end of file
-diff --git a/configs/ts-pi-rk3566_defconfig b/configs/ts-pi-rk3566_defconfig
+diff --git a/configs/seewo-sv21-rk3568_defconfig b/configs/seewo-sv21-rk3568_defconfig
 new file mode 100644
-index 00000000000..5ea96a7bf62
+index 00000000000..6e6546f71b3
 --- /dev/null
-+++ b/configs/ts-pi-rk3566_defconfig
++++ b/configs/seewo-sv21-rk3568_defconfig
 @@ -0,0 +1,237 @@
 +CONFIG_ARM=y
 +CONFIG_ARCH_ROCKCHIP=y
@@ -407,7 +422,7 @@ index 00000000000..5ea96a7bf62
 +CONFIG_SPL_NAND_SUPPORT=y
 +CONFIG_SPL_SPI_FLASH_SUPPORT=y
 +CONFIG_SPL_SPI_SUPPORT=y
-+CONFIG_DEFAULT_DEVICE_TREE="rk3566-ts-pi"
++CONFIG_DEFAULT_DEVICE_TREE="rk3568-seewo-sv21"
 +CONFIG_DEBUG_UART=y
 +CONFIG_FIT=y
 +CONFIG_FIT_IMAGE_POST_PROCESS=y
@@ -609,7 +624,7 @@ index 00000000000..5ea96a7bf62
 +CONFIG_OPTEE_CLIENT=y
 +CONFIG_OPTEE_V2=y
 +CONFIG_OPTEE_ALWAYS_USE_SECURITY_PARTITION=y
-+CONFIG_LOADER_INI="RK3566MINIALL.ini"
++CONFIG_LOADER_INI="RK3568MINIALL.ini"
 +CONFIG_CMD_PCI=y
 +CONFIG_NVME=y
 +CONFIG_PCI=y
