@@ -2,7 +2,7 @@
 BOARD_NAME="Seewo SV21"
 BOARDFAMILY="rk35xx"
 BOOTCONFIG="seewo-sv21-rk3568_defconfig"
-KERNEL_TARGET="vendor"
+KERNEL_TARGET="legacy,vendor"
 BOOT_LOGO="desktop"
 BOOT_FDT_FILE="rockchip/rk3568-seewo-sv21.dtb"
 IMAGE_PARTITION_TABLE="gpt"
