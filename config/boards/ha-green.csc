@@ -18,5 +18,5 @@ function post_family_config__ha-green_use_mainline_uboot() {
 	BOOTBRANCH="branch:rk3xxx-2024.04"
 	BOOTDIR="u-boot-${BOARD}"
 	BOOTPATCHDIR="u-boot-${BOARD}"
-	BOOTDELAY=1
+	BOOTDELAY=3
 }

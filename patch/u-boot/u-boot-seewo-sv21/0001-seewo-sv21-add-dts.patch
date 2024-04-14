@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: John Doe <john.doe@somewhere.on.planet>
-Date: Mon, 25 Mar 2024 11:35:20 +0800
+Date: Sun, 14 Apr 2024 18:54:07 +0800
 Subject: Patching u-boot rk35xx files arch/arm/dts/rk3568-seewo-sv21.dts
  configs/seewo-sv21-rk3568_defconfig
 
@@ -12,7 +12,7 @@ Signed-off-by: John Doe <john.doe@somewhere.on.planet>
 
 diff --git a/arch/arm/dts/rk3568-seewo-sv21.dts b/arch/arm/dts/rk3568-seewo-sv21.dts
 new file mode 100644
-index 00000000000..ba2330f6c13
+index 00000000000..c8879c1b539
 --- /dev/null
 +++ b/arch/arm/dts/rk3568-seewo-sv21.dts
 @@ -0,0 +1,379 @@
@@ -67,7 +67,7 @@ index 00000000000..ba2330f6c13
 +	};
 +
 +	adc_keys: adc-keys {
-+		u-boot,dm-spl;
++		u-boot,dm-pre-reloc;
 +		compatible = "adc-keys";
 +		io-channels = <&saradc 0>;
 +		io-channel-names = "buttons";
@@ -75,7 +75,7 @@ index 00000000000..ba2330f6c13
 +		status = "okay";
 +
 +		volumeup-key {
-+			u-boot,dm-spl;
++			u-boot,dm-pre-reloc;
 +			linux,code = <KEY_VOLUMEUP>;
 +			label = "volume up";
 +			press-threshold-microvolt = <1750>;

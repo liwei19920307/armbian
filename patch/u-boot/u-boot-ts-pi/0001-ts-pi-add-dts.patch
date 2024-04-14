@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: John Doe <john.doe@somewhere.on.planet>
-Date: Mon, 25 Mar 2024 10:37:52 +0800
+Date: Sun, 14 Apr 2024 19:22:35 +0800
 Subject: Patching u-boot rk35xx files arch/arm/dts/rk3566-ts-pi.dts
  configs/ts-pi-rk3566_defconfig
 
@@ -12,7 +12,7 @@ Signed-off-by: John Doe <john.doe@somewhere.on.planet>
 
 diff --git a/arch/arm/dts/rk3566-ts-pi.dts b/arch/arm/dts/rk3566-ts-pi.dts
 new file mode 100644
-index 00000000000..64ab218d61e
+index 00000000000..d951f534807
 --- /dev/null
 +++ b/arch/arm/dts/rk3566-ts-pi.dts
 @@ -0,0 +1,364 @@
@@ -68,7 +68,7 @@ index 00000000000..64ab218d61e
 +	};
 +
 +	adc_keys: adc-keys {
-+		u-boot,dm-spl;
++		u-boot,dm-pre-reloc;
 +		compatible = "adc-keys";
 +		io-channels = <&saradc 0>;
 +		io-channel-names = "buttons";
@@ -76,7 +76,7 @@ index 00000000000..64ab218d61e
 +		status = "okay";
 +
 +		volumeup-key {
-+			u-boot,dm-spl;
++			u-boot,dm-pre-reloc;
 +			linux,code = <KEY_VOLUMEUP>;
 +			label = "volume up";
 +			press-threshold-microvolt = <108>;
