@@ -1,21 +1,21 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: John Doe <john.doe@somewhere.on.planet>
-Date: Tue, 16 Apr 2024 21:37:18 +0800
+Date: Wed, 17 Apr 2024 21:22:37 +0800
 Subject: Patching u-boot rockchip64 files arch/arm/dts/rk3399-tb-ls3399.dts
  configs/tb-ls3399-rk3399_defconfig
 
 Signed-off-by: John Doe <john.doe@somewhere.on.planet>
 ---
- arch/arm/dts/rk3399-tb-ls3399.dts  | 406 ++++++++++
+ arch/arm/dts/rk3399-tb-ls3399.dts  | 420 ++++++++++
  configs/tb-ls3399-rk3399_defconfig | 147 ++++
- 2 files changed, 553 insertions(+)
+ 2 files changed, 567 insertions(+)
 
 diff --git a/arch/arm/dts/rk3399-tb-ls3399.dts b/arch/arm/dts/rk3399-tb-ls3399.dts
 new file mode 100644
-index 00000000000..cb50342a712
+index 00000000000..9b7278bc530
 --- /dev/null
 +++ b/arch/arm/dts/rk3399-tb-ls3399.dts
-@@ -0,0 +1,406 @@
+@@ -0,0 +1,420 @@
 +/dts-v1/;
 +#include "rk3399.dtsi"
 +#include "rk3399-u-boot.dtsi"
@@ -111,6 +111,22 @@ index 00000000000..cb50342a712
 +			press-threshold-microvolt = <0>;
 +		};
 +	};
++};
++
++&gmac {
++	phy-supply = <&vcc_phy>;
++	phy-mode = "rgmii";
++	clock_in_out = "input";
++	snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
++	snps,reset-active-low;
++	snps,reset-delays-us = <0 10000 50000>;
++	assigned-clocks = <&cru SCLK_RMII_SRC>;
++	assigned-clock-parents = <&clkin_gmac>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&rgmii_pins>;
++	tx_delay = <0x23>;
++	rx_delay = <0x26>;
++	status = "okay";
 +};
 +
 +&i2c0 {
@@ -372,14 +388,12 @@ index 00000000000..cb50342a712
 +};
 +
 +&sdmmc {
-+	clock-frequency = <50000000>;
-+	clock-freq-min-max = <400000 150000000>;
-+	supports-sd;
++	num-slots = <1>;
 +	bus-width = <4>;
++	supports-sd;
 +	cap-mmc-highspeed;
 +	cap-sd-highspeed;
 +	disable-wp;
-+	num-slots = <1>;
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_cd &sdmmc_bus4>;
 +	vqmmc-supply = <&vcc_sd>;
