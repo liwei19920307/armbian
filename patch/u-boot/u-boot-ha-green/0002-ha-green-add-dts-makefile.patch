@@ -1,0 +1,29 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: John Doe <john.doe@somewhere.on.planet>
+Date: Mon, 25 Mar 2024 10:19:35 +0800
+Subject: Patching u-boot rk35xx files arch/arm/dts/Makefile
+
+Signed-off-by: John Doe <john.doe@somewhere.on.planet>
+---
+ arch/arm/dts/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/dts/Makefile b/arch/arm/dts/Makefile
+index 7926776c533..198b0a7ef04 100644
+--- a/arch/arm/dts/Makefile
++++ b/arch/arm/dts/Makefile
+@@ -184,10 +184,11 @@ dtb-$(CONFIG_ROCKCHIP_RK3568) += \
+ 	rk3566-quartz64-b.dtb \
+ 	rk3566-radxa-cm3-io.dtb \
+ 	rk3566-soquartz-blade.dtb \
+ 	rk3566-soquartz-cm4.dtb \
+ 	rk3566-soquartz-model-a.dtb \
++	rk3566-ha-green.dtb \
+ 	rk3568-bpi-r2-pro.dtb \
+ 	rk3568-evb.dtb \
+ 	rk3568-generic.dtb \
+ 	rk3568-lubancat-2.dtb \
+ 	rk3568-nanopi-r5c.dtb \
+-- 
+Created with Armbian build tools https://github.com/armbian/build
+
