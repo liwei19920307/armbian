@@ -1,0 +1,35 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Stefan Agner <stefan@agner.ch>
+Date: Wed, 19 Jul 2023 10:08:06 +0200
+Subject: [PATCH] Input: rk805-pwrkey: reverse polarity of pwrkey
+
+The power key on HA Green is low active. Reverse logic to avoid
+involuntary long press being reported to user space (from HAOS).
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ drivers/input/misc/rk805-pwrkey.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/input/misc/rk805-pwrkey.c b/drivers/input/misc/rk805-pwrkey.c
+index 11111111111..22222222222 100644
+--- a/drivers/input/misc/rk805-pwrkey.c
++++ b/drivers/input/misc/rk805-pwrkey.c
+@@ -20,7 +20,7 @@ static irqreturn_t pwrkey_fall_irq(int irq, void *_pwr)
+ {
+ 	struct input_dev *pwr = _pwr;
+ 
+-	input_report_key(pwr, KEY_POWER, 1);
++	input_report_key(pwr, KEY_POWER, 0);
+ 	input_sync(pwr);
+ 
+ 	return IRQ_HANDLED;
+@@ -30,7 +30,7 @@ static irqreturn_t pwrkey_rise_irq(int irq, void *_pwr)
+ {
+ 	struct input_dev *pwr = _pwr;
+ 
+-	input_report_key(pwr, KEY_POWER, 0);
++	input_report_key(pwr, KEY_POWER, 1);
+ 	input_sync(pwr);
+ 
+ 	return IRQ_HANDLED;

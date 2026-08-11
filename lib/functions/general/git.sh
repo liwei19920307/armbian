@@ -47,8 +47,14 @@ function regular_git() {
 # avoid repeating myself too much
 function improved_git_fetch() {
 	declare -a verbose_params=() && if_user_on_terminal_and_not_logging_add verbose_params "--verbose" "--progress"
+	# Optional shallow fetch (e.g. GIT_FETCH_DEPTH=1) — avoids unshallowing vendor kernels into multi-GB packs.
+	declare -a depth_params=()
+	if [[ -n "${GIT_FETCH_DEPTH:-}" ]]; then
+		depth_params+=("--depth=${GIT_FETCH_DEPTH}")
+		display_alert "git fetch depth" "GIT_FETCH_DEPTH=${GIT_FETCH_DEPTH}" "info"
+	fi
 	# --no-auto-maintenance requires a recent git version, not available on focal-like host OSs
-	improved_git fetch "${verbose_params[@]}" --recurse-submodules=no "$@"
+	improved_git fetch "${verbose_params[@]}" "${depth_params[@]}" --recurse-submodules=no "$@"
 }
 
 # workaround new limitations imposed by CVE-2022-24765 fix in git, otherwise  "fatal: unsafe repository"

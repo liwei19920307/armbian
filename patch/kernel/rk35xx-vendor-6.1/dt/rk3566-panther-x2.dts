@@ -3,6 +3,7 @@
 #include <dt-bindings/leds/common.h>
 #include <dt-bindings/input/rk-input.h>
 #include "rk3566.dtsi"
+#include <dt-bindings/phy/phy.h>
 
 / {
 	model = "RK3566 Panther X2";
@@ -14,6 +15,7 @@
 	};
 
 	aliases: aliases {
+		ethernet0 = &gmac1;
 		mmc0 = &sdhci;
 		mmc1 = &sdmmc0;
 	};
@@ -148,10 +150,11 @@
 		keyup-threshold-microvolt = <1800000>;
 		poll-interval = <100>;
 
-		restart-key {
-			label = "restart";
-			linux,code = <KEY_RESTART>;
-			press-threshold-microvolt = <0>;
+		/* ADC ch0 ~0V = volume-up / recovery (U-Boot dnl -> BootROM maskrom) */
+		volumeup-key {
+			label = "volume up";
+			linux,code = <KEY_VOLUMEUP>;
+			press-threshold-microvolt = <17000>;
 		};
 	};
 };
@@ -168,6 +171,7 @@
 	assigned-clock-parents = <&cru SCLK_GMAC1_RGMII_SPEED>, <&cru CLK_MAC1_2TOP>;
 	assigned-clock-rates = <0>, <125000000>;
 	clock_in_out = "output";
+	phy-supply = <&vcc_3v3>;
 
 	snps,reset-gpio = <&gpio3 RK_PA1 GPIO_ACTIVE_LOW>;
 	snps,reset-active-low;
@@ -183,6 +187,10 @@
 		     &gmac1m0_rgmii_clk
 		     &gmac1m0_rgmii_bus>;
 
+	/* RGMII skew for Panther X2 + RTL8211F (output clock).
+	 * Verified: 1Gbps Full, 0 CRC; do NOT copy HA-Green 0x47/0x27
+	 * or mainline archive 0x30/0x10 (different clocking).
+	 */
 	tx_delay = <0x41>;
 	rx_delay = <0x2e>;
 
@@ -222,10 +230,34 @@
 
 &gpu {
 	clock-names = "gpu", "bus";
-	interrupt-names = "gpu", "mmu", "job";
+	interrupt-names = "GPU", "MMU", "JOB";
 	mali-supply = <&vdd_gpu>;
+	power-off-delay-ms = <200>;
 	status = "okay";
 };
+
+&gpu_opp_table {
+	/* Match CPU: rockchip,supported-hw needs per-OPP masks (were commented in rk356x.dtsi). */
+	opp-200000000 {
+		opp-supported-hw = <0xfb 0xffff>;
+	};
+	opp-300000000 {
+		opp-supported-hw = <0xfb 0xffff>;
+	};
+	opp-400000000 {
+		opp-supported-hw = <0xfb 0xffff>;
+	};
+	opp-600000000 {
+		opp-supported-hw = <0xfb 0xffff>;
+	};
+	opp-700000000 {
+		opp-supported-hw = <0xfb 0xffff>;
+	};
+	opp-800000000 {
+		opp-supported-hw = <0xf9 0xffff>;
+	};
+};
+
 
 &i2c0 {
 	status = "okay";
@@ -383,11 +415,9 @@
 			};
 
 			vccio_sd: LDO_REG5 {
-				regulator-always-on;
-				regulator-boot-on;
+				regulator-name = "vccio_sd";
 				regulator-min-microvolt = <1800000>;
 				regulator-max-microvolt = <3300000>;
-				regulator-name = "vccio_sd";
 
 				regulator-state-mem {
 					regulator-off-in-suspend;
@@ -467,8 +497,6 @@
 			};
 
 			vcc3v3_sd: SWITCH_REG2 {
-				regulator-always-on;
-				regulator-boot-on;
 				regulator-name = "vcc3v3_sd";
 
 				regulator-state-mem {
@@ -527,23 +555,36 @@
 &sdhci {
 	bus-width = <8>;
 	mmc-hs200-1_8v;
+	no-sdio;
+	no-sd;
 	non-removable;
+	max-frequency = <200000000>;
 	vmmc-supply = <&vcc_3v3>;
 	vqmmc-supply = <&vcc_1v8>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&emmc_clk &emmc_cmd &emmc_bus8>;
 	status = "okay";
 };
 
 &sdmmc0 {
+	/* sd4: clone HA-Green supplies + keep vendor normal/idle; no UHS */
 	bus-width = <4>;
-	cap-mmc-highspeed;
 	cap-sd-highspeed;
-	supports-sd;
+	cd-gpios = <&gpio0 RK_PA4 GPIO_ACTIVE_LOW>;
 	disable-wp;
-	pinctrl-names = "default";
-	pinctrl-0 = <&sdmmc0_bus4 &sdmmc0_clk &sdmmc0_cmd &sdmmc0_det>;
+	max-frequency = <50000000>;
+	no-sdio;
+	no-mmc;
+	vmmc-supply = <&vcc3v3_sd>;
 	vqmmc-supply = <&vccio_sd>;
+	pinctrl-names = "default", "normal", "idle";
+	pinctrl-0 = <&sdmmc0_bus4 &sdmmc0_clk &sdmmc0_cmd>;
+	pinctrl-1 = <&sdmmc0_bus4 &sdmmc0_clk &sdmmc0_cmd>;
+	pinctrl-2 = <&sdmmc0_bus4 &sdmmc0_clk &sdmmc0_cmd>;
 	status = "okay";
 };
+
+
 
 &sdmmc1 {
 	supports-sdio;
@@ -657,6 +698,7 @@
 };
 
 &rknpu {
+	interrupt-names = "npu_irq";
 	rknpu-supply = <&vdd_npu>;
 	status = "okay";
 };
@@ -686,23 +728,39 @@
 };
 
 &u2phy0_host {
+	phy-supply = <&vcc5v0_usb>;
+	status = "okay";
+};
+
+&u2phy0_otg {
+	phy-supply = <&vcc5v0_usb>;
 	status = "okay";
 };
 
 &usb_host0_ehci {
-	status = "okay";
+	/* DWC3/xhci owns this port */
+	status = "disabled";
 };
 
 &usb_host0_ohci {
-	status = "okay";
+	/* DWC3/xhci owns this port */
+	status = "disabled";
 };
 
+
+&combphy1_usq {
+	status = "disabled";
+};
 &usbdrd30 {
 	status = "okay";
 };
 
 &usbdrd_dwc3 {
+	/* Panther X2 has USB2 only — no SuperSpeed PHY */
 	dr_mode = "host";
+	phys = <&u2phy0_otg>;
+	phy-names = "usb2-phy";
+	maximum-speed = "high-speed";
 	extcon = <&usb2phy0>;
 	status = "okay";
 };

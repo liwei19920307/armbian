@@ -11,10 +11,11 @@
 
 	chosen: chosen {
 		stdout-path = &uart2;
-		u-boot,spl-boot-order = &sfc, &sdmmc0, &sdhci;
+		u-boot,spl-boot-order = &sdmmc0, &sdhci, &sfc;
 	};
 
 	aliases: aliases {
+		ethernet0 = &gmac1;
 		mmc0 = &sdhci;
 		mmc1 = &sdmmc0;
 		spi4 = &sfc;
@@ -140,6 +141,7 @@
 	assigned-clock-parents = <&cru SCLK_GMAC1_RGMII_SPEED>;
 	assigned-clock-rates = <0>, <125000000>;
 	clock_in_out = "output";
+	phy-supply = <&vcc_3v3>;
 
 	snps,reset-gpio = <&gpio4 RK_PC2 GPIO_ACTIVE_LOW>;
 	snps,reset-active-low;
@@ -192,6 +194,8 @@
 };
 
 &hdmi {
+	avdd-0v9-supply = <&vdda_0v9>;
+	avdd-1v8-supply = <&vcc_1v8>;
 	status = "okay";
 };
 
@@ -502,10 +506,11 @@
 	cd-gpios = <&gpio0 RK_PA4 GPIO_ACTIVE_LOW>;
 	disable-wp;
 	sd-uhs-sdr104;
+	max-frequency = <100000000>;
 	vmmc-supply = <&vcc3v3_sd>;
 	vqmmc-supply = <&vccio_sd>;
 	pinctrl-names = "default";
-	pinctrl-0 = <&sdmmc0_bus4 &sdmmc0_clk &sdmmc0_cmd &sdmmc0_det>;
+	pinctrl-0 = <&sdmmc0_bus4 &sdmmc0_clk &sdmmc0_cmd>;
 	status = "okay";
 };
 
@@ -516,7 +521,7 @@
 	pinctrl-0 = <&fspi_dual_io_pins>;
 	status = "okay";
 
-	flash@0 {
+	spiflash: flash@0 {
 		compatible = "jedec,spi-nor";
 		reg = <0>;
 		spi-max-frequency = <25000000>;
