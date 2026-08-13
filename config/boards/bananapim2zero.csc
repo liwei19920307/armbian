@@ -1,0 +1,12 @@
+# Allwinner H2+ quad core 512MB SoC Wi-Fi/BT
+BOARD_NAME="Banana Pi M2 Zero"
+BOARD_VENDOR="sinovoip"
+BOARDFAMILY="sun8i"
+BOARD_MAINTAINER="mhawkins-consultant"
+INTRODUCED="2017"
+BOOTCONFIG="bananapi_m2_zero_defconfig"
+MODULES_LEGACY="g_serial"
+MODULES_CURRENT="g_serial"
+SERIALCON="ttyS0,ttyGS0"
+KERNEL_TARGET="current,edge,legacy"
+KERNEL_TEST_TARGET="current"

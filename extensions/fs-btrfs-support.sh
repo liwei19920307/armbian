@@ -9,5 +9,18 @@ function extension_prepare_config__add_to_image_btrfs-progs() {
 
 function add_host_dependencies__add_btrfs_tooling() {
 	display_alert "Extension: ${EXTENSION}: Adding packages to host dependencies" "btrfs-progs" "debug"
-	EXTRA_BUILD_DEPS="${EXTRA_BUILD_DEPS} btrfs-progs" # @TODO: convert to array later
+	EXTRA_BUILD_DEPS+=("fs-tools::btrfs-progs")
+}
+
+function pre_update_initramfs__add_compression_module_to_initramfs() {
+	local modules=()
+	case "$BTRFS_CHECKSUM" in
+		xxhash) modules+=( xxhash_generic ) ;;
+		blake2) modules+=( blake2b_generic ) ;;
+		*) ;;
+	esac
+	if [[ "${#modules[@]}" -gt 0 ]]; then
+		display_alert "Extension: ${EXTENSION}: Adding extra boot-time module(s)" "${modules[*]}" info
+		printf '%s\n' "${modules[@]}" >> "$MOUNT"/etc/initramfs-tools/modules
+	fi
 }

@@ -1,0 +1,10 @@
+# Allwinner H6 quad core 2/4GB SoC WiFi eMMC
+BOARD_NAME="Tanix TX6"
+BOARD_VENDOR="allwinner"
+BOARDFAMILY="sun50iw6"
+BOARD_MAINTAINER=""
+INTRODUCED="2018"
+BOOTCONFIG="tanix_tx6_defconfig"
+KERNEL_TARGET="current,edge,legacy"
+KERNEL_TEST_TARGET="current"
+CRUSTCONFIG="tanix_tx6_defconfig"
