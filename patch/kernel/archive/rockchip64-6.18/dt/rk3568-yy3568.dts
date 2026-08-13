@@ -1,59 +1,11 @@
-<<<<<<<< HEAD:patch/kernel/rk35xx-vendor-6.1/dt/rk3566-ha-green.dts
-========
 // SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 /*
  * Copyright (c) 2020 Rockchip Electronics Co., Ltd.
  *
  */
->>>>>>>> upstream/main:patch/kernel/archive/rockchip64-6.18/dt/rk3568-yy3568.dts
 /dts-v1/;
 
 #include <dt-bindings/gpio/gpio.h>
-<<<<<<<< HEAD:patch/kernel/rk35xx-vendor-6.1/dt/rk3566-ha-green.dts
-#include <dt-bindings/leds/common.h>
-#include <dt-bindings/display/rockchip_vop.h>
-#include "rk3566.dtsi"
-#include "rk3568-linux.dtsi"
-
-/ {
-	model = "RK3566 HA Green";
-	compatible = "rockchip,rk3566-ha-green", "rockchip,rk3566";
-
-	chosen: chosen {
-		stdout-path = &uart2;
-		u-boot,spl-boot-order = &sdmmc0, &sdhci, &sfc;
-	};
-
-	aliases: aliases {
-		ethernet0 = &gmac1;
-		mmc0 = &sdhci;
-		mmc1 = &sdmmc0;
-		spi4 = &sfc;
-	};
-
-	fiq_debugger: fiq-debugger {
-		compatible = "rockchip,fiq-debugger";
-		rockchip,serial-id = <2>;
-		rockchip,wake-irq = <0>;
-		rockchip,irq-mode-enable = <1>;
-		rockchip,baudrate = <1500000>;
-		interrupts = <GIC_SPI 252 IRQ_TYPE_LEVEL_LOW>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&uart2m0_xfer>;
-		status = "okay";
-	};
-
-	dc_12v: dc-12v {
-		compatible = "regulator-fixed";
-		regulator-name = "dc_12v";
-		regulator-always-on;
-		regulator-boot-on;
-		regulator-min-microvolt = <12000000>;
-		regulator-max-microvolt = <12000000>;
-	};
-
-	vcc5v0_sys: vcc5v0-sys {
-========
 #include <dt-bindings/pwm/pwm.h>
 #include <dt-bindings/pinctrl/rockchip.h>
 #include <dt-bindings/soc/rockchip,vop2.h>
@@ -224,7 +176,6 @@
 	};
 
 	vcc5v0_sys: regulator-vcc5v0-sys {
->>>>>>>> upstream/main:patch/kernel/archive/rockchip64-6.18/dt/rk3568-yy3568.dts
 		compatible = "regulator-fixed";
 		regulator-name = "vcc5v0_sys";
 		regulator-always-on;
@@ -234,122 +185,6 @@
 		vin-supply = <&vcc12v_input>;
 	};
 
-<<<<<<<< HEAD:patch/kernel/rk35xx-vendor-6.1/dt/rk3566-ha-green.dts
-	vcc5v0_usb_host: vcc5v0-usb-host {
-		compatible = "regulator-fixed";
-		regulator-name = "vcc5v0_usb_host";
-		enable-active-high;
-		gpio = <&gpio0 RK_PA6 GPIO_ACTIVE_HIGH>;
-		regulator-min-microvolt = <5000000>;
-		regulator-max-microvolt = <5000000>;
-		vin-supply = <&vcc5v0_sys>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&vcc5v0_usb_host_en_pin>;
-	};
-
-	vcc3v3_sys: vcc3v3-sys {
-		compatible = "regulator-fixed";
-		regulator-name = "vcc3v3_sys";
-		regulator-always-on;
-		regulator-boot-on;
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
-		vin-supply = <&dc_12v>;
-	};
-
-	leds: leds {
-		compatible = "gpio-leds";
-
-		led_power: led-power {
-			label = "power";
-			gpios = <&gpio0 RK_PB6 GPIO_ACTIVE_HIGH>;
-			function = LED_FUNCTION_POWER;
-			color = <LED_COLOR_ID_WHITE>;
-			default-state = "keep";
-			linux,default-trigger = "default-on";
-			pinctrl-names = "default";
-			pinctrl-0 = <&led_power_pin>;
-		};
-
-		led_activity: led-activity {
-			label = "activity";
-			gpios = <&gpio0 RK_PB7 GPIO_ACTIVE_HIGH>;
-			function = LED_FUNCTION_ACTIVITY;
-			color = <LED_COLOR_ID_GREEN>;
-			linux,default-trigger = "activity";
-			pinctrl-names = "default";
-			pinctrl-0 = <&led_activity_pin>;
-		};
-
-		led_user: led-user {
-			label = "user";
-			gpios = <&gpio0 RK_PC5 GPIO_ACTIVE_HIGH>;
-			function = LED_FUNCTION_HEARTBEAT;
-			color = <LED_COLOR_ID_YELLOW>;
-			linux,default-trigger = "heartbeat";
-			pinctrl-names = "default";
-			pinctrl-0 = <&led_user_pin>;
-		};
-	};
-
-	hdmi_sound: hdmi-sound {
-		compatible = "simple-audio-card";
-		simple-audio-card,format = "i2s";
-		simple-audio-card,mclk-fs = <128>;
-		simple-audio-card,name = "rockchip,hdmi";
-		status = "okay";
-
-		simple-audio-card,cpu {
-				sound-dai = <&i2s0_8ch>;
-		};
-		simple-audio-card,codec {
-				sound-dai = <&hdmi>;
-		};
-	};
-
-	test_power: test-power {
-			status = "okay";
-	};
-};
-
-&mdio1 {
-	rgmii_phy1: ethernet-phy@0 {
-		compatible = "ethernet-phy-ieee802.3-c22";
-		reg = <0x0>;
-	};
-};
-
-&gmac1 {
-	assigned-clocks = <&cru SCLK_GMAC1_RX_TX>, <&cru SCLK_GMAC1>;
-	assigned-clock-parents = <&cru SCLK_GMAC1_RGMII_SPEED>;
-	assigned-clock-rates = <0>, <125000000>;
-	clock_in_out = "output";
-	phy-supply = <&vcc_3v3>;
-
-	snps,reset-gpio = <&gpio4 RK_PC2 GPIO_ACTIVE_LOW>;
-	snps,reset-active-low;
-	snps,reset-delays-us = <0 20000 100000>;
-
-	phy-handle = <&rgmii_phy1>;
-	phy-mode = "rgmii";
-
-	tx_delay = <0x47>;
-	rx_delay = <0x27>;
-
-	pinctrl-names = "default";
-	pinctrl-0 = <&gmac1m0_miim
-			 &gmac1m0_tx_bus2
-			 &gmac1m0_rx_bus2
-			 &gmac1m0_rgmii_clk
-			 &gmac1m0_rgmii_bus>;
-
-	status = "okay";
-};
-
-&bus_npu {
-	bus-supply = <&vdd_logic>;
-	pvtm-supply = <&vdd_cpu>;
-========
 	/* labeled +12v_input in schematic */
 	vcc12v_input: regulator-vcc5v-input {
 		compatible = "regulator-fixed";
@@ -371,7 +206,6 @@
 };
 
 &combphy2 {
->>>>>>>> upstream/main:patch/kernel/archive/rockchip64-6.18/dt/rk3568-yy3568.dts
 	status = "okay";
 };
 
@@ -379,15 +213,6 @@
 	cpu-supply = <&vdd_cpu>;
 };
 
-<<<<<<<< HEAD:patch/kernel/rk35xx-vendor-6.1/dt/rk3566-ha-green.dts
-&dfi {
-	status = "okay";
-};
-
-&dmc {
-	center-supply = <&vdd_logic>;
-	status = "okay";
-========
 &cpu1 {
 	cpu-supply = <&vdd_cpu>;
 };
@@ -398,19 +223,13 @@
 
 &cpu3 {
 	cpu-supply = <&vdd_cpu>;
->>>>>>>> upstream/main:patch/kernel/archive/rockchip64-6.18/dt/rk3568-yy3568.dts
 };
 
 &gpu {
-	clock-names = "gpu", "bus";
-	interrupt-names = "gpu", "mmu", "job";
 	mali-supply = <&vdd_gpu>;
 	status = "okay";
 };
 
-<<<<<<<< HEAD:patch/kernel/rk35xx-vendor-6.1/dt/rk3566-ha-green.dts
-&display_subsystem {
-========
 &vop {
 	assigned-clocks = <&cru DCLK_VOP0>, <&cru DCLK_VOP1>;
 	assigned-clock-parents = <&pmucru PLL_HPLL>, <&cru PLL_VPLL>;
@@ -433,31 +252,25 @@
 	assigned-clock-rates = <32768>;
 	avdd-0v9-supply = <&vdda0v9_image>;
 	avdd-1v8-supply = <&vcca1v8_image>;
->>>>>>>> upstream/main:patch/kernel/archive/rockchip64-6.18/dt/rk3568-yy3568.dts
 	status = "okay";
 };
 
-&hdmi {
-	avdd-0v9-supply = <&vdda_0v9>;
-	avdd-1v8-supply = <&vcc_1v8>;
-	status = "okay";
+&hdmi_in {
+	hdmi_in_vp0: endpoint {
+		remote-endpoint = <&vp0_out_hdmi>;
+	};
 };
 
-&hdmi_in_vp0 {
-	status = "okay";
+&hdmi_out {
+	hdmi_out_con: endpoint {
+		remote-endpoint = <&hdmi_con_in>;
+	};
 };
 
 &hdmi_sound {
 	status = "okay";
 };
 
-<<<<<<<< HEAD:patch/kernel/rk35xx-vendor-6.1/dt/rk3566-ha-green.dts
-&route_hdmi {
-	connect = <&vp0_out_hdmi>;
-	status = "okay";
-};
-
-========
 &hdmi_sound {
 	status = "okay";
 };
@@ -484,27 +297,21 @@
 	phys = <&pcie30phy>;
 };
 
->>>>>>>> upstream/main:patch/kernel/archive/rockchip64-6.18/dt/rk3568-yy3568.dts
 &i2c0 {
 	status = "okay";
 
-	vdd_cpu: rk8601@41 {
-		compatible = "rockchip,rk8601";
-		reg = <0x41>;
-		vin-supply = <&vcc5v0_sys>;
-		regulator-compatible = "rk860x-reg";
+	vdd_cpu: regulator@1c {
+		compatible = "tcs,tcs4525";
+		reg = <0x1c>;
+		fcs,suspend-voltage-selector = <1>;
 		regulator-name = "vdd_cpu";
-		regulator-min-microvolt = <712500>;
-		regulator-max-microvolt = <1500000>;
-		regulator-ramp-delay = <2300>;
-<<<<<<<< HEAD:patch/kernel/rk35xx-vendor-6.1/dt/rk3566-ha-green.dts
-		rockchip,suspend-voltage-selector = <1>;
-		regulator-boot-on;
 		regulator-always-on;
-========
+		regulator-boot-on;
+		regulator-min-microvolt = <800000>;
+		regulator-max-microvolt = <1150000>;
+		regulator-ramp-delay = <2300>;
 		vin-supply = <&vcc12v_input>;
 
->>>>>>>> upstream/main:patch/kernel/archive/rockchip64-6.18/dt/rk3568-yy3568.dts
 		regulator-state-mem {
 			regulator-off-in-suspend;
 		};
@@ -514,19 +321,6 @@
 		compatible = "rockchip,rk809";
 		reg = <0x20>;
 		interrupt-parent = <&gpio0>;
-<<<<<<<< HEAD:patch/kernel/rk35xx-vendor-6.1/dt/rk3566-ha-green.dts
-		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
-
-		rockchip,system-power-controller;
-		wakeup-source;
-		#clock-cells = <1>;
-		clock-output-names = "rk808-clkout1", "rk808-clkout2";
-		pmic-reset-func = <0>;
-		not-save-power-en = <1>;
-
-		pinctrl-names = "default";
-		pinctrl-0 = <&pmic_int_l>;
-========
 		interrupts = <RK_PA3 IRQ_TYPE_LEVEL_LOW>;
 		#clock-cells = <1>;
 		pinctrl-names = "default";
@@ -534,7 +328,6 @@
 		#sound-dai-cells = <0>;
 		system-power-controller;
 		wakeup-source;
->>>>>>>> upstream/main:patch/kernel/archive/rockchip64-6.18/dt/rk3568-yy3568.dts
 
 		vcc1-supply = <&vcc3v3_sys>;
 		vcc2-supply = <&vcc3v3_sys>;
@@ -545,20 +338,12 @@
 		vcc7-supply = <&vcc3v3_sys>;
 		vcc8-supply = <&vcc3v3_sys>;
 		vcc9-supply = <&vcc3v3_sys>;
-<<<<<<<< HEAD:patch/kernel/rk35xx-vendor-6.1/dt/rk3566-ha-green.dts
-
-		pwrkey {
-			status = "okay";
-		};
-========
->>>>>>>> upstream/main:patch/kernel/archive/rockchip64-6.18/dt/rk3568-yy3568.dts
 
 		regulators {
 			vdd_logic: DCDC_REG1 {
 				regulator-name = "vdd_logic";
 				regulator-always-on;
 				regulator-boot-on;
-				regulator-init-microvolt = <900000>;
 				regulator-initial-mode = <0x2>;
 				regulator-min-microvolt = <500000>;
 				regulator-max-microvolt = <1350000>;
@@ -572,7 +357,6 @@
 			vdd_gpu: DCDC_REG2 {
 				regulator-name = "vdd_gpu";
 				regulator-always-on;
-				regulator-init-microvolt = <900000>;
 				regulator-initial-mode = <0x2>;
 				regulator-min-microvolt = <500000>;
 				regulator-max-microvolt = <1350000>;
@@ -596,9 +380,6 @@
 
 			vdd_npu: DCDC_REG4 {
 				regulator-name = "vdd_npu";
-				regulator-always-on;
-				regulator-boot-on;
-				regulator-init-microvolt = <900000>;
 				regulator-initial-mode = <0x2>;
 				regulator-min-microvolt = <500000>;
 				regulator-max-microvolt = <1350000>;
@@ -746,16 +527,6 @@
 	};
 };
 
-<<<<<<<< HEAD:patch/kernel/rk35xx-vendor-6.1/dt/rk3566-ha-green.dts
-&i2c1 {
-	clock-frequency = <400000>;
-	status = "okay";
-
-	rtc: rtc@51 {
-		compatible = "nxp,pcf8563";
-		reg = <0x51>;
-		#clock-cells = <0>;
-========
 &pinctrl {
 	leds {
 		led_user_en: led_user_en {
@@ -808,7 +579,6 @@
 		vcc5v0_otg_en: vcc5v0_otg_en {
 			rockchip,pins = <0 RK_PA5 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
->>>>>>>> upstream/main:patch/kernel/archive/rockchip64-6.18/dt/rk3568-yy3568.dts
 	};
 };
 
@@ -816,68 +586,11 @@
 	status = "okay";
 };
 
-&pmu_io_domains {
-	pmuio1-supply = <&vcc3v3_pmu>;
-	pmuio2-supply = <&vcc3v3_pmu>;
-	vccio1-supply = <&vccio_acodec>;
-	vccio2-supply = <&vcc_1v8>;
-	vccio3-supply = <&vccio_sd>;
-	vccio4-supply = <&vcc_1v8>;
-	vccio5-supply = <&vcc_1v8>;
-	vccio6-supply = <&vcc_1v8>;
-	vccio7-supply = <&vcc_3v3>;
+&i2s1_8ch {
+	rockchip,trcm-sync-tx-only;
 	status = "okay";
 };
 
-<<<<<<<< HEAD:patch/kernel/rk35xx-vendor-6.1/dt/rk3566-ha-green.dts
-&sdhci {
-	bus-width = <8>;
-	mmc-hs200-1_8v;
-	no-sdio;
-	no-sd;
-	non-removable;
-	max-frequency = <200000000>;
-	vmmc-supply = <&vcc_3v3>;
-	vqmmc-supply = <&vcc_1v8>;
-	pinctrl-names = "default";
-	pinctrl-0 = <&emmc_clk &emmc_cmd &emmc_bus8>;
-	status = "okay";
-};
-
-&sdmmc0 {
-	bus-width = <4>;
-	cap-sd-highspeed;
-	cd-gpios = <&gpio0 RK_PA4 GPIO_ACTIVE_LOW>;
-	disable-wp;
-	sd-uhs-sdr104;
-	max-frequency = <100000000>;
-	vmmc-supply = <&vcc3v3_sd>;
-	vqmmc-supply = <&vccio_sd>;
-	pinctrl-names = "default";
-	pinctrl-0 = <&sdmmc0_bus4 &sdmmc0_clk &sdmmc0_cmd>;
-	status = "okay";
-};
-
-&sfc {
-	#address-cells = <1>;
-	#size-cells = <0>;
-	pinctrl-names = "default";
-	pinctrl-0 = <&fspi_dual_io_pins>;
-	status = "okay";
-
-	spiflash: flash@0 {
-		compatible = "jedec,spi-nor";
-		reg = <0>;
-		spi-max-frequency = <25000000>;
-		spi-rx-bus-width = <1>;
-		spi-tx-bus-width = <1>;
-	};
-};
-
-&tsadc {
-	rockchip,hw-tshut-mode = <1>;
-	rockchip,hw-tshut-polarity = <0>;
-========
 &pmu_io_domains {
 	pmuio1-supply = <&vcc3v3_pmu>;
 	pmuio2-supply = <&vcc3v3_pmu>;
@@ -888,7 +601,6 @@
 	vccio5-supply = <&vcc_3v3>;
 	vccio6-supply = <&vcc_1v8>;
 	vccio7-supply = <&vcc_3v3>;
->>>>>>>> upstream/main:patch/kernel/archive/rockchip64-6.18/dt/rk3568-yy3568.dts
 	status = "okay";
 };
 
@@ -897,126 +609,6 @@
 	status = "okay";
 };
 
-<<<<<<<< HEAD:patch/kernel/rk35xx-vendor-6.1/dt/rk3566-ha-green.dts
-&uart2 {
-	status = "disabled";
-};
-
-&rng {
-	status = "okay";
-};
-
-&crypto {
-	status = "okay";
-};
-
-&iep {
-	status = "okay";
-};
-
-&iep_mmu {
-	status = "okay";
-};
-
-&jpegd {
-	status = "okay";
-};
-
-&jpegd_mmu {
-	status = "okay";
-};
-
-&mpp_srv {
-	status = "okay";
-};
-
-&rk_rga {
-	status = "okay";
-};
-
-&rkvdec {
-	status = "okay";
-};
-
-&rkvdec_mmu {
-	status = "okay";
-};
-
-&rkvenc {
-	venc-supply = <&vdd_logic>;
-	status = "okay";
-};
-
-&rkvenc_mmu {
-	status = "okay";
-};
-
-&rknpu {
-	rknpu-supply = <&vdd_npu>;
-	status = "okay";
-};
-
-&rknpu_mmu {
-	status = "okay";
-};
-
-&vdpu {
-	status = "okay";
-};
-
-&vdpu_mmu {
-	status = "okay";
-};
-
-&vepu {
-	status = "okay";
-};
-
-&vepu_mmu {
-	status = "okay";
-};
-
-&vop {
-	assigned-clocks = <&cru DCLK_VOP0>, <&cru DCLK_VOP1>;
-	assigned-clock-parents = <&pmucru PLL_HPLL>, <&cru PLL_VPLL>;
-	status = "okay";
-};
-
-&vop_mmu {
-	status = "okay";
-};
-
-&vp0 {
-	rockchip,plane-mask = <(1 << ROCKCHIP_VOP2_CLUSTER0 | 1 << ROCKCHIP_VOP2_ESMART0)>;
-	rockchip,primary-plane = <ROCKCHIP_VOP2_ESMART0>;
-};
-
-&u2phy0_host {
-	phy-supply = <&vcc5v0_usb_host>;
-	status = "okay";
-};
-
-&u2phy0_otg {
-	phy-supply = <&vcc5v0_usb_host>;
-	status = "okay";
-};
-
-&u2phy1_host {
-	phy-supply = <&vcc5v0_usb_host>;
-	status = "okay";
-};
-
-&u2phy1_otg {
-	phy-supply = <&vcc5v0_usb_host>;
-	status = "okay";
-};
-
-&usb2phy0 {
-	status = "okay";
-};
-
-&usb2phy1 {
-========
 &sdhci {
 	bus-width = <8>;
 	max-frequency = <200000000>;
@@ -1112,7 +704,6 @@
 				&gmac1m1_rx_bus2
 				&gmac1m1_rgmii_clk
 				&gmac1m1_rgmii_bus>;
->>>>>>>> upstream/main:patch/kernel/archive/rockchip64-6.18/dt/rk3568-yy3568.dts
 	status = "okay";
 };
 
@@ -1124,15 +715,12 @@
 	status = "okay";
 };
 
-<<<<<<<< HEAD:patch/kernel/rk35xx-vendor-6.1/dt/rk3566-ha-green.dts
-========
 &usb_host0_xhci {
 	dr_mode = "host";
 	extcon = <&usb2phy0>;
 	status = "okay";
 };
 
->>>>>>>> upstream/main:patch/kernel/archive/rockchip64-6.18/dt/rk3568-yy3568.dts
 &usb_host1_ehci {
 	status = "okay";
 };
@@ -1141,54 +729,6 @@
 	status = "okay";
 };
 
-<<<<<<<< HEAD:patch/kernel/rk35xx-vendor-6.1/dt/rk3566-ha-green.dts
-&pinctrl {
-	fspi {
-		fspi_dual_io_pins: fspi-dual-io-pins {
-			rockchip,pins =
-				/* fspi_clk */
-				<1 RK_PD0 1 &pcfg_pull_none>,
-				/* fspi_cs0n */
-				<1 RK_PD3 1 &pcfg_pull_none>,
-				/* fspi_d0 */
-				<1 RK_PD1 1 &pcfg_pull_none>,
-				/* fspi_d1 */
-				<1 RK_PD2 1 &pcfg_pull_none>;
-		};
-	};
-
-	ethernet {
-		eth_phy_rst: eth_phy_rst {
-			rockchip,pins = <4 RK_PC2 RK_FUNC_GPIO &pcfg_pull_none>;
-		};
-	};
-
-	leds {
-		led_power_pin: led-power-pin {
-			rockchip,pins = <0 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
-		};
-		led_activity_pin: led-activity-pin {
-			rockchip,pins = <0 RK_PB7 RK_FUNC_GPIO &pcfg_pull_none>;
-		};
-		led_user_pin: led-user-pin {
-			rockchip,pins = <0 RK_PC5 RK_FUNC_GPIO &pcfg_pull_none>;
-		};
-	};
-
-	pmic {
-		pmic_int_l: pmic-int-l {
-			rockchip,pins = <0 RK_PA3 RK_FUNC_GPIO &pcfg_pull_up>;
-		};
-	};
-
-	usb {
-		vcc5v0_usb_host_en_pin: vcc5v0-usb-host-en-pin {
-			rockchip,pins = <0 RK_PA6 RK_FUNC_GPIO &pcfg_pull_none>;
-		};
-	};
-};
-
-========
 &usb_host1_xhci {
 	status = "okay";
 };
@@ -1215,4 +755,3 @@
 	phy-supply = <&vcc5v0_host>;
 	status = "okay";
 };
->>>>>>>> upstream/main:patch/kernel/archive/rockchip64-6.18/dt/rk3568-yy3568.dts

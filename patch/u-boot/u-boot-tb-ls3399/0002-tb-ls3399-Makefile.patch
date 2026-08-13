@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Armbian <armbian@local>
+Date: Wed, 12 Aug 2026 07:30:00 +0800
+Subject: tb-ls3399: register board DTB in Makefile
+
+Signed-off-by: Armbian <armbian@local>
+---
+ arch/arm/dts/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/dts/Makefile b/arch/arm/dts/Makefile
+index 1111111111..2222222222 100644
+--- a/arch/arm/dts/Makefile
++++ b/arch/arm/dts/Makefile
+@@ -53,6 +53,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += \
+ 	rk3368-px5-evb.dtb \
+ 	rk3399-evb.dtb \
+ 	rk3399-firefly.dtb \
++	rk3399-tb-ls3399.dtb \
+ 	rk3399-puma-ddr1333.dtb \
+ 	rk3399-puma-ddr1600.dtb \
+ 	rk3399-puma-ddr1866.dtb \

@@ -27,3 +27,17 @@ function post_family_config__panther-x2_use_orangepi_uboot() {
 	BOOTDELAY=3
 }
 
+
+
+function post_family_tweaks__panther_x2_wifi_bt() {
+	display_alert "$BOARD" "Enable brcmfmac + HCI UART Bluetooth autoload" "info"
+	mkdir -p "${SDCARD}/etc/modules-load.d" "${SDCARD}/lib/firmware/brcm"
+	cat <<-EOF >"${SDCARD}/etc/modules-load.d/panther-x2-wireless.conf"
+		brcmfmac
+		hci_uart
+		btbcm
+	EOF
+	ln -sf brcmfmac43430-sdio.bin "${SDCARD}/lib/firmware/brcm/brcmfmac43430-sdio.rockchip,panther-x2.bin" || true
+	ln -sf brcmfmac43430-sdio.txt "${SDCARD}/lib/firmware/brcm/brcmfmac43430-sdio.rockchip,panther-x2.txt" || true
+	ln -sf brcmfmac43430-sdio.clm_blob "${SDCARD}/lib/firmware/brcm/brcmfmac43430-sdio.rockchip,panther-x2.clm_blob" || true
+}

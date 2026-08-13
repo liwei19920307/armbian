@@ -115,7 +115,7 @@ index 00000000000..9b7278bc530
 +
 +&gmac {
 +	phy-supply = <&vcc_phy>;
-+	phy-mode = "rgmii";
++	phy-mode = "rgmii-id";
 +	clock_in_out = "input";
 +	snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
 +	snps,reset-active-low;
@@ -124,8 +124,8 @@ index 00000000000..9b7278bc530
 +	assigned-clock-parents = <&clkin_gmac>;
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&rgmii_pins>;
-+	tx_delay = <0x23>;
-+	rx_delay = <0x26>;
++	tx_delay = <0x00>;
++	rx_delay = <0x00>;
 +	status = "okay";
 +};
 +
@@ -459,7 +459,7 @@ index 00000000000..f0cf1027d34
 +CONFIG_FIT=y
 +CONFIG_SPL_LOAD_FIT=y
 +# CONFIG_SPL_SYS_DCACHE_OFF is not set
-+CONFIG_BOOTDELAY=0
++CONFIG_BOOTDELAY=3
 +CONFIG_SYS_CONSOLE_INFO_QUIET=y
 +# CONFIG_DISPLAY_CPUINFO is not set
 +CONFIG_ANDROID_BOOTLOADER=y
@@ -502,7 +502,7 @@ index 00000000000..f0cf1027d34
 +# CONFIG_SPL_DOS_PARTITION is not set
 +# CONFIG_ISO_PARTITION is not set
 +CONFIG_EFI_PARTITION_ENTRIES_NUMBERS=64
-+CONFIG_RKPARM_PARTITION=y
++# CONFIG_RKPARM_PARTITION is not set
 +CONFIG_SPL_OF_CONTROL=y
 +CONFIG_OF_LIVE=y
 +CONFIG_OF_SPL_REMOVE_PROPS="pinctrl-0 pinctrl-names clock-names interrupt-parent assigned-clocks assigned-clock-rates assigned-clock-parents"

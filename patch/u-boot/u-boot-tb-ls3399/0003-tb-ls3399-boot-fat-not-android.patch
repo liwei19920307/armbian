@@ -1,0 +1,26 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Armbian <armbian@localhost>
+Date: Thu, 13 Aug 2026 11:55:00 +0800
+Subject: [PATCH] tb-ls3399: boot FAT boot.scr instead of Android/OP-TEE
+
+---
+ include/configs/evb_rk3399.h | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/include/configs/evb_rk3399.h b/include/configs/evb_rk3399.h
+index 5565c7ce53e..a5a555ce328 100644
+--- a/include/configs/evb_rk3399.h
++++ b/include/configs/evb_rk3399.h
+@@ -11,7 +11,11 @@
+ 
+ #ifndef CONFIG_SPL_BUILD
+ #undef CONFIG_BOOTCOMMAND
+-#define CONFIG_BOOTCOMMAND RKIMG_BOOTCOMMAND
++#define CONFIG_BOOTCOMMAND \
++	"mmc dev 0; " \
++	"if fatload mmc 0:1 ${scriptaddr} /boot.scr; then source ${scriptaddr}; " \
++	"elif fatload mmc 0:1 ${scriptaddr} /boot/boot.scr; then source ${scriptaddr}; " \
++	"else run distro_bootcmd; fi;"
+ #endif
+ 
+ #define CONFIG_MMC_SDHCI_SDMA
