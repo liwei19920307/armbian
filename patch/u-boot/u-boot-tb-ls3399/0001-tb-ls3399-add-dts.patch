@@ -104,10 +104,18 @@ index 00000000000..9b7278bc530
 +		keyup-threshold-microvolt = <1800000>;
 +		status = "okay";
 +
++		/* Factory: vol-up adc=0xaa (~300mV), vol-down adc=0x01 (~0) */
 +		volumeup-key {
 +			u-boot,dm-pre-reloc;
 +			linux,code = <KEY_VOLUMEUP>;
 +			label = "volume up";
++			press-threshold-microvolt = <300000>;
++		};
++
++		volumedown-key {
++			u-boot,dm-pre-reloc;
++			linux,code = <KEY_VOLUMEDOWN>;
++			label = "volume down";
 +			press-threshold-microvolt = <0>;
 +		};
 +	};

@@ -1,0 +1,25 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Armbian <armbian@localhost>
+Date: Fri, 14 Aug 2026 07:20:00 +0800
+Subject: [PATCH] tb-ls3399: enter download on either volume key
+
+Factory vol-up is SARADC ~170, vol-down is ~1. Accept both so the
+silkscreen Volume+ and the near-ground key can enter rockusb.
+
+---
+ arch/arm/mach-rockchip/boot_rkimg.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-rockchip/boot_rkimg.c b/arch/arm/mach-rockchip/boot_rkimg.c
+--- a/arch/arm/mach-rockchip/boot_rkimg.c
++++ b/arch/arm/mach-rockchip/boot_rkimg.c
+@@ -302,7 +302,8 @@ __weak int rockchip_dnl_key_pressed(void)
+ {
+ #if defined(CONFIG_DM_KEY)
+-	return key_is_pressed(key_read(KEY_VOLUMEUP));
++	return key_is_pressed(key_read(KEY_VOLUMEUP)) ||
++	       key_is_pressed(key_read(KEY_VOLUMEDOWN));
+ 
+ #elif defined(CONFIG_ADC)
+ 	const void *blob = gd->fdt_blob;
+ 	int node, ret, channel = 1;

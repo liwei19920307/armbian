@@ -120,6 +120,19 @@
 		vin-supply = <&vcc5v0_sys>;
 	};
 
+	/* Factory topband-4g: EN=GPIO4_D5, RST=GPIO2_B0; modem is USB SimTech 1e0e:9001 */
+	vcc_4g: vcc-4g {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc_4g";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		gpio = <&gpio4 RK_PD5 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+		regulator-always-on;
+		regulator-boot-on;
+		startup-delay-us = <100000>;
+	};
+
 	backlight: backlight {
 		compatible = "pwm-backlight";
 		pwms = <&pwm1 0 50000 0>;
@@ -184,17 +197,17 @@
 		keyup-threshold-microvolt = <1800000>;
 		poll-interval = <100>;
 
-		/* Keep vol-up ~=0 to match old U-Boot key/flash behavior */
+		/* Factory rockchip,adc_value: vol-up=0xaa (~300mV), vol-down=0x01 (~0) */
 		volume-up-key {
 			label = "Volume Up";
 			linux,code = <KEY_VOLUMEUP>;
-			press-threshold-microvolt = <10000>;
+			press-threshold-microvolt = <300000>;
 		};
 
 		volume-down-key {
 			label = "Volume Down";
 			linux,code = <KEY_VOLUMEDOWN>;
-			press-threshold-microvolt = <300000>;
+			press-threshold-microvolt = <10000>;
 		};
 	};
 };
@@ -767,3 +780,13 @@
 &mipi_dsi1 {
 	status = "disabled";
 };
+
+&gpio2 {
+	modem-rst-hog {
+		gpio-hog;
+		gpios = <RK_PB0 GPIO_ACTIVE_HIGH>;
+		output-low;
+		line-name = "modem-rst";
+	};
+};
+
