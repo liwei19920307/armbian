@@ -109,7 +109,7 @@ if ((${#SCOPED_ARGS[@]} > 0)); then
 	fi
 else
 	# Full-tree mode: aggregate every file the framework cares about.
-	board_config_files=$(find config/boards -type f \( -name "*.conf" -o -name "*.csc" -o -name "*.tvb" -o -name "*.eos" -o -name "*.wip" \)) # All board config files
+	board_config_files=$(find config/boards -type f \( -name "*.lsc" -o -name "*.conf" -o -name "*.csc" -o -name "*.tvb" -o -name "*.eos" -o -name "*.wip" \)) # All board config files
 	family_config_files=$(find config/sources -type f \( -name "*.conf" -o -name "*.inc" -o -name "*.sh" \))                                  # All family config files
 	lib_files=$(find lib -type f -name "*.sh")                                                                                                # All build framework shell files
 	extensions_files=$(find extensions -type f -name "*.sh")                                                                                  # All extension shell files

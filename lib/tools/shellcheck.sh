@@ -122,7 +122,7 @@ declare -a config_files=()
 declare -a config_source_files=()
 declare -a config_board_files=()
 mapfile -t config_source_files < <(find "${SRC}/config/sources" -type f -name "*.inc" -o -name "*.conf")
-mapfile -t config_board_files < <(find "${SRC}/config/boards" -type f -name "*.wip" -o -name "*.tvb" -o -name "*.conf" -o -name "*.csc" -o -name "*.eos")
+mapfile -t config_board_files < <(find "${SRC}/config/boards" -type f -name "*.lsc" -o -name "*.wip" -o -name "*.tvb" -o -name "*.conf" -o -name "*.csc" -o -name "*.eos")
 # add all elements of config_source_files and config_board_files to config_files
 config_files=("${config_source_files[@]}" "${config_board_files[@]}")
 

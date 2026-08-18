@@ -96,7 +96,7 @@ function config_source_board_file() {
 	declare -a BOARD_SOURCE_FILES=()
 	# This has to be syncronized with get_list_of_all_buildable_boards() in interactive.sh!
 	# I used to re-use that code here, but it's very slow, specially for CONFIG_DEFS_ONLY.
-	local -a board_types=("conf" "wip" "csc" "eos" "tvb")
+	local -a board_types=("lsc" "conf" "wip" "csc" "eos" "tvb")
 	local -a board_file_paths=("${SRC}/config/boards" "${USERPATCHES_PATH}/config/boards")
 	declare board_file_path board_type full_board_file first_board_type_found
 	for board_file_path in "${board_file_paths[@]}"; do
